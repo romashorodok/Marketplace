@@ -8,13 +8,11 @@
 
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
-{{--        <script type="text/javascript" src="{{ asset('js/app.js') }}" defer></script>--}}
+        <script type="text/javascript" src="{{ asset('js/app.js') }}" defer></script>
     </head>
     <body class="min-vh-100 d-flex justify-content-center align-items-center">
         <div id="app">
             @yield('content')
-{{--            <example-component></example-component>--}}
         </div>
-
     </body>
 </html>
