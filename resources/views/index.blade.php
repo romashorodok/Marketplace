@@ -5,12 +5,16 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>Laravel</title>
+
+        <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
+{{--        <script type="text/javascript" src="{{ asset('js/app.js') }}" defer></script>--}}
     </head>
-    <body>
+    <body class="min-vh-100 d-flex justify-content-center align-items-center">
         <div id="app">
-            <example-component></example-component>
+            @yield('content')
+{{--            <example-component></example-component>--}}
         </div>
 
-        <script type="text/javascript" src="{{ asset('js/app.js') }}"></script>
     </body>
 </html>
