@@ -28,7 +28,7 @@ class AuthController extends Controller
 
         return $result
             ? response(["status" => "OK"], 200)
-            : response(["status" => "BAD"], 404);
+            : response(["status" => "BAD"], 401);
     }
 
     public function logout(Request $request)
