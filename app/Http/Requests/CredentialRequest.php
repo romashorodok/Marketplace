@@ -24,11 +24,9 @@ class CredentialRequest extends FormRequest
      */
     public function rules()
     {
-        $userTable = 'users';
-
         return [
             'email' => 'required|string|email|'.
-                'exists:' . $userTable,
+                'exists:' . User::class,
 
             'password' => 'required|string'
         ];
