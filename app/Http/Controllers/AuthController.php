@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CredentialRequest;
 use App\Services\AuthenticateService;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class AuthController extends Controller
 {
@@ -15,7 +16,7 @@ class AuthController extends Controller
         $this->authenticate = $authenticate;
     }
 
-    public function login(CredentialRequest $request)
+    public function login(CredentialRequest $request): Response
     {
         $request->validated();
 
@@ -31,7 +32,7 @@ class AuthController extends Controller
             : response(["status" => "BAD"], 401);
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request): Response
     {
         $this->authenticate->logout();
         $request->session()->flush();
@@ -39,7 +40,7 @@ class AuthController extends Controller
         return response(["status" => "OK"], 202);
     }
 
-    public function getUser(Request $request)
+    public function getUser(Request $request): Response
     {
         return response([
             'user' => $this->authenticate->getUser()

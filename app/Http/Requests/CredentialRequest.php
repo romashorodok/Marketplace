@@ -28,7 +28,6 @@ class CredentialRequest extends FormRequest
 
         return [
             'email' => 'required|string|email|'.
-                'unique:' . $userTable . '|'.
                 'exists:' . $userTable,
 
             'password' => 'required|string'
