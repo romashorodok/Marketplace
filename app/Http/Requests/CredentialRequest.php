@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\User;
 
 class CredentialRequest extends FormRequest
 {
@@ -23,8 +24,13 @@ class CredentialRequest extends FormRequest
      */
     public function rules()
     {
+        $userTable = 'users';
+
         return [
-            'email' => 'required|string',
+            'email' => 'required|string|email|'.
+                'unique:' . $userTable . '|'.
+                'exists:' . $userTable,
+
             'password' => 'required|string'
         ];
     }
@@ -32,8 +38,9 @@ class CredentialRequest extends FormRequest
     public function messages()
     {
         return [
-            'email.required' => 'Email required',
-            'password.required' => 'Password required'
+            'email.required'    => 'Email required',
+            'email.exists'      => 'Email is invalid',
+            'password.required' => 'Password required',
         ];
     }
 
