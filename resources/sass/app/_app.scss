@@ -1,0 +1,19 @@
+
+.app {
+    display: flex;
+    justify-content: center;
+
+    &-layout {
+        width: 100%;
+
+        position: relative;
+
+        background: $body-bg;
+    }
+
+   &-wrapper {
+       padding: 25px 0;
+
+       width: 75%;
+   }
+}

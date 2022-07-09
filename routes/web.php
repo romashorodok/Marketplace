@@ -14,4 +14,6 @@ use App\Http\Controllers\AuthController;
 |
 */
 
+Route::get('/', fn() => view('index'));
+
 Route::get('/login', [AuthController::class, 'loginView']);

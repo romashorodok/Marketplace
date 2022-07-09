@@ -10,9 +10,9 @@
 
         <script type="text/javascript" src="{{ asset('js/app.js') }}" defer></script>
     </head>
-    <body class="min-vh-100 d-flex justify-content-center align-items-center">
+    <body>
         <div id="app">
-            @yield('content')
+
         </div>
     </body>
 </html>
