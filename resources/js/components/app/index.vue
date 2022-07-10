@@ -10,11 +10,11 @@
 </template>
 
 <script>
-import header from '../header';
+import AppHeader from '../header';
 
 export default {
     components: {
-        "app-header": header
+        AppHeader
     }
 }
 </script>
