@@ -23,8 +23,8 @@
 </template>
 
 <script>
-import { login } from '../../user';
-import modal from '../modal';
+import { login } from '@user';
+import modal from '@components/modal';
 
 export default {
     props: ['show'],

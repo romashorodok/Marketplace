@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import AppHeader from '../header';
+import AppHeader from '@components/header';
 
 export default {
     components: {

@@ -4,8 +4,8 @@
 
 <script>
 import { toRefs } from 'vue';
-import { state as userState } from '../../user';
-import modal from '../modal';
+import { state as userState } from '@user';
+import modal from '@components/modal';
 
 export default {
 

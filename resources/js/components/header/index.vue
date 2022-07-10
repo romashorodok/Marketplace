@@ -12,14 +12,15 @@
                 <button @click="loginToggle">Login</button>
             </div>
         </div>
-        <login :show="loginVisible" @close="loginToggle"/>
+<!--        <login :show="loginVisible" @close="loginToggle"/>-->
+        <app-login :show="loginVisible" @close="loginToggle"/>
     </header>
 </template>
 
 <script>
 import { toRefs } from "vue";
-import { logout, state as userState } from '../../user';
-import login from '../login';
+import { logout, state as userState } from '@user';
+import AppLogin from '@components/login';
 
 export default {
 
@@ -41,7 +42,7 @@ export default {
     },
 
     components: {
-        login
+        AppLogin
     },
 
     methods: {
