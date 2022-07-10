@@ -1,14 +1,27 @@
 <template>
-    <h1>test</h1>
+
 </template>
 
 <script>
+import modal from '../modal';
 
 export default {
-
+    name: 'App',
+    components: {
+        modal
+    },
+    data() {
+        return {
+            isModalVisible: false
+        };
+    },
+    methods: {
+        showModal() {
+            this.isModalVisible = true;
+        },
+        closeModal() {
+            this.isModalVisible = false;
+        }
+    }
 }
 </script>
-
-<style scoped>
- * { min-height: 800px; }
-</style>

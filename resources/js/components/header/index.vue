@@ -4,13 +4,29 @@
             <router-link to="/">Home</router-link>
         </div>
         <div class="header-account">
-            <router-link to="/login">Login</router-link>
+            <button @click="loginToggle">Login</button>
         </div>
+
+        <login :show="loginVisible" @close="loginToggle"/>
     </header>
 </template>
 
 <script>
-export default {
+import login from '../login';
 
+export default {
+    data() {
+        return {
+            loginVisible: false
+        }
+    },
+    components: {
+        login
+    },
+    methods: {
+        loginToggle() {
+            this.loginVisible = !this.loginVisible;
+        }
+    }
 }
 </script>
