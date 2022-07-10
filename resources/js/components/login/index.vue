@@ -23,11 +23,14 @@
 </template>
 
 <script>
-import { login } from '@user';
 import modal from '@components/modal';
 
+import { login } from '@user';
+
 export default {
-    props: ['show'],
+    props: {
+        show: Boolean
+    },
 
     setup() {
         return {
@@ -41,6 +44,15 @@ export default {
                 email: '',
                 password: ''
             }
+        }
+    },
+
+    methods: {
+        async login() {
+            const result = await login(this.credentials);
+
+            if (result)
+                this.$emit('close');
         }
     },
 

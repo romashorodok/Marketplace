@@ -12,7 +12,7 @@
                 <button @click="loginToggle">Login</button>
             </div>
         </div>
-<!--        <login :show="loginVisible" @close="loginToggle"/>-->
+
         <app-login :show="loginVisible" @close="loginToggle"/>
     </header>
 </template>

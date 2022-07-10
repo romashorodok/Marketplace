@@ -3,13 +3,13 @@ import { reactive } from 'vue';
 /**
  * https://vuejs.org/api/reactivity-core.html
  */
-const state = reactive({
+export const state = reactive({
     isAuthorized: false,
 
     user: null
 });
 
-const authorize = (user) => {
+export const authorize = (user) => {
     if (user) {
         state.user = user;
         state.isAuthorized = true;
@@ -23,14 +23,13 @@ const authorize = (user) => {
     }
 };
 
-const login = (credentials) => {
-    axios.post('/api/login', {...credentials})
+export const login = (credentials) => {
+
+    return axios.post('/api/login', {...credentials})
         .then(result => authorize(result.data.user))
-        .catch(error => console.log(error))
+        .catch(error => false)
 };
 
-const logout = () => {
+export const logout = () => {
     authorize(null);
 }
-
-export { login, logout, state };
