@@ -3,17 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CredentialRequest;
+use App\Models\User;
 use App\Services\AuthenticateService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Laravel\Passport\TokenRepository;
+use Illuminate\Contracts\Auth\Authenticatable;
+
 
 class AuthController extends Controller
 {
-    private AuthenticateService $authenticate;
 
-    public function __construct(AuthenticateService $authenticate)
+    public function __construct(
+        public AuthenticateService $authenticate,
+        public TokenRepository $tokens
+    )
     {
-        $this->authenticate = $authenticate;
+        $this->middleware('client.credentials')
+            ->only(['token']);
     }
 
     public function login(CredentialRequest $request): Response
@@ -28,16 +35,44 @@ class AuthController extends Controller
             $request->session()->regenerate();
 
         return $result
-            ? response(["status" => "OK"], 200)
+            ? response([
+                "status" => "OK",
+                "token"  => $this->authenticate->getAccessToken()
+            ], 200)
             : response(["status" => "BAD"], 401);
     }
 
-    public function logout(Request $request): Response
+    public function logout(Request $request, User|Authenticatable $user = null): Response
     {
         $this->authenticate->logout();
         $request->session()->flush();
 
-        return response(["status" => "OK"], 202);
+        $user?->token()->revoke();
+
+        return response([
+            "status" => "OK",
+        ], 202);
+    }
+
+    public function token(Request $request): Response
+    {
+
+        /* @var User $tokenUser */
+        $tokenUser = \Auth::guard('api')->user();
+
+        if ($tokenUser->token()->user_id === $request->user()->id)
+        {
+            return response([
+                "status" => "OK"
+            ], 200);
+        } else
+        {
+            $this->logout($request, $tokenUser);
+
+            return response([
+                "status" => "BAD"
+            ], 403);
+        }
     }
 
     public function getUser(Request $request): Response
