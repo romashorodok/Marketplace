@@ -7,7 +7,6 @@ use App\Models\User;
 use App\Services\AuthenticateService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Laravel\Passport\TokenRepository;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 
@@ -16,7 +15,6 @@ class AuthController extends Controller
 
     public function __construct(
         public AuthenticateService $authenticate,
-        public TokenRepository $tokens
     )
     {
         $this->middleware('client.credentials')
