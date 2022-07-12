@@ -1,15 +1,11 @@
-import { watch, toRefs } from "vue";
-import { authorize, state } from '@user';
+import { createStore } from 'vuex';
 
-const { user } = toRefs(state);
+import appModule from '@components/app/module';
+import userModule from '@user/module';
 
-const localUser = localStorage.getItem('user');
-
-if (localUser !== null) {
-    // TODO: Add access toke validation if not valid logout
-    authorize(JSON.parse(localUser));
-}
-
-watch(user, (next) => {
-    localStorage.setItem('user', JSON.stringify(next));
+export default createStore({
+    modules: {
+        app: appModule,
+        user: userModule
+    },
 });

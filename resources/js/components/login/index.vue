@@ -1,8 +1,9 @@
 <template>
-    <modal v-show="show" @close="">
+    <modal>
         <template v-slot:modal-header>
             <h3>Login</h3>
         </template>
+
         <template v-slot:modal-body>
             <div class="wrapper-field">
                 <label>Email</label>
@@ -11,33 +12,24 @@
             <div class="wrapper-field">
                 <label>Password</label>
                 <input v-model="credentials.password" type="password">
-
-                <button @click="login(credentials)">
-                    Login
-                </button>
             </div>
+
+            <button @click="this.login(credentials)">Login</button>
         </template>
+
         <template v-slot:modal-footer>
+
         </template>
     </modal>
 </template>
 
 <script>
-import modal from '@components/modal';
-
-import { login } from '@user';
+import modal from '@/shared/modal';
+import { useStore, mapActions } from "vuex";
 
 export default {
-    props: {
-        show: Boolean
-    },
-
-    setup() {
-        return {
-            login
-        }
-    },
-
+    setup: () => ({ store: useStore() }),
+    methods: mapActions(['login']),
     data: () => {
         return {
             credentials: {
@@ -46,16 +38,6 @@ export default {
             }
         }
     },
-
-    methods: {
-        async login() {
-            const result = await login(this.credentials);
-
-            if (result)
-                this.$emit('close');
-        }
-    },
-
     components: {
         modal
     }

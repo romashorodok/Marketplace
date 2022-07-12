@@ -1,18 +1,14 @@
 
 .header {
-    display: flex;
-    justify-content: space-between;
-    padding: 20px;
+    &-action {
+        display: flex;
 
-    background: white;
-
-    &-home {
-
-    }
-
-    &-account {
         & > * {
             margin-right: 10px;
+        }
+
+        & > *:last-child {
+            margin-right: 0;
         }
     }
 }

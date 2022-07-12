@@ -1,5 +1,5 @@
 <template>
-    <transition name="modal-fade">
+    <transition name="modal-fade" mode="out-in">
         <div class="modal-backdrop">
             <div class="modal-wrapper">
                 <section class="modal-header">
@@ -28,7 +28,7 @@
     </transition>
 </template>
 
-<style scoped>
+<style>
 .modal-backdrop {
     right: 0;
     top: 0;

@@ -11,7 +11,7 @@
         <script type="text/javascript" src="{{ asset('js/app.js') }}" defer></script>
     </head>
     <body>
-        <div id="app">
+        <div id="app" class="app-wrapper">
 
         </div>
     </body>
