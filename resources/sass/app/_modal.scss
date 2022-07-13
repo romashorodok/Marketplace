@@ -1,0 +1,116 @@
+
+.modal {
+    &-backdrop {
+        top: 0;
+        left: 0;
+
+        background-color: rgba(0, 0, 0, 0.3);
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    &-wrapper {
+        background: $body-bg;
+
+        box-shadow: 2px 2px 20px 1px;
+        border-radius: 5px;
+
+        display: flex;
+        flex-direction: column;;
+
+        overflow: hidden;
+        padding: 15px;
+
+        border: 2px solid $fg-1;
+
+        min-width: 400px;
+        min-height: 400px;
+    }
+
+    &-body {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+
+        .modal-login-auth {
+
+            .login-confirm {
+                margin-top: 15px;
+                width: 100%;
+            }
+        }
+
+        .modal-login-oauth {
+            border-top: 1px solid $fg-1;
+            margin-top: 35px;
+            margin-bottom: 25px;
+            position: relative;
+
+            .oauth-divider {
+                position: absolute;
+                left: 42%;
+                top: -14px;
+                background: $fg-1-hover;
+                color: $fg-1;
+                padding: 0 20px;
+                border-radius: 5px;
+                border: 1px solid $fg-1;
+            }
+
+            .google-confirm {
+                margin-top: 40px;
+                width: 100%;
+            }
+        }
+
+        .modal-login-action {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .body-field {
+            display: flex;
+            flex-direction: column;
+
+            margin-top: 10px;
+
+            input {
+                margin: 0;
+                border: 1px solid $fg-1;
+                border-radius: 5px;
+                padding: 5px 10px;
+            }
+
+            input:focus {
+                outline: none;
+            }
+
+            label {
+                margin-bottom: 5px;
+            }
+
+            :last-child {
+                margin-top: 5px;
+            }
+        }
+    }
+
+    &-header {
+        border-bottom: 1px solid $fg-1;
+        justify-content: space-between;
+    }
+
+    &-footer {
+        border-top: 1px solid $fg-1;
+        padding: 1.4em;
+    }
+
+    &-close {
+        background: transparent;
+        border: none;
+    }
+}

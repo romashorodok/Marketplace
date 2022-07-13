@@ -18,3 +18,14 @@
     color: $fg-1;
     border: 1px solid $fg-1;
 }
+
+.app-btn-link {
+    color: $text;
+    cursor: pointer;
+    user-select: none;
+    text-decoration: none;
+}
+
+.app-btn-link:hover {
+    color: $fg-1;
+}
