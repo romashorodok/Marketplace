@@ -1,5 +1,5 @@
 <template>
-    <modal>
+    <app-modal>
         <template v-slot:modal-header>
             <h3 class="modal-header-name">Login</h3>
         </template>
@@ -43,19 +43,14 @@
                 </a>
             </section>
         </template>
-
-        <template v-slot:modal-footer>
-
-        </template>
-    </modal>
+    </app-modal>
 </template>
 
 <script>
-import modal from '@/shared/modal';
-import {useStore, mapActions} from "vuex";
+import AppModal from '@/shared/modal';
+import { mapActions, mapMutations } from "vuex";
 
 export default {
-    setup: () => ({store: useStore()}),
     methods: {
         checkForm() {
             const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -66,9 +61,9 @@ export default {
                 this.emailMessage = null;
             }
 
-            if (!this.credentials.password){
+            if (!this.credentials.password) {
                 this.passwordMessage = "Enter password";
-            } else  {
+            } else {
                 this.passwordMessage = null;
             }
 
@@ -82,9 +77,10 @@ export default {
         },
 
         redirectRegister() {
-            console.log(this.credentials);
+            this.changeModal('register');
         },
 
+        ...mapMutations({ changeModal: 'changeModal' }),
         ...mapActions(['login'])
     },
     data: () => {
@@ -98,23 +94,6 @@ export default {
             passwordMessage: null
         }
     },
-    components: {
-        modal
-    }
+    components: {AppModal}
 }
 </script>
-
-<style scoped>
-input {
-    margin: 5px;
-}
-
-.wrapper-field {
-    display: flex;
-    flex-direction: column;
-}
-
-h3 {
-    margin: 0;
-}
-</style>

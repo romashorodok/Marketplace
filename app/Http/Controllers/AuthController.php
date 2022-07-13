@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CredentialRequest;
+use App\Http\Requests\RegisterCredentialRequest;
 use App\Models\User;
 use App\Services\AuthenticateService;
 use Illuminate\Http\Request;
@@ -52,6 +53,37 @@ class AuthController extends Controller
         ], 202);
     }
 
+    public function register(RegisterCredentialRequest $request): Response
+    {
+        $credentials = $request->validated();
+        $password = $credentials['password'];
+        $credentials['password'] = \Hash::make($credentials['password']);
+
+        try {
+            User::create($credentials);
+
+            $authenticated =  $this->authenticate->tryAuthenticate([
+                "email" => $credentials['email'],
+                "password" => $password
+            ]);
+
+            if ($authenticated)
+                return response([
+                    "status" => "OK",
+                    "token" => $this->authenticate->getAccessToken()
+                ], 201);
+            else
+                return response([
+                    "status" => "CREATED"
+                ], 201);
+        } catch (\Exception $e) {
+            return response([
+                "status" => "BAD",
+                "message" => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function token(Request $request): Response
     {
 
@@ -78,10 +110,5 @@ class AuthController extends Controller
         return response([
             'user' => $this->authenticate->getUser()
         ], 200);
-    }
-
-    //TODO: Change it by vue router
-    public function loginView() {
-        return view('auth.login-vue');
     }
 }

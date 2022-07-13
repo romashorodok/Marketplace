@@ -1,6 +1,7 @@
 
 export const modal = {
     register: 'register',
+    login: 'login',
     closed: 'closed'
 };
 
@@ -10,7 +11,7 @@ export default {
     }),
     mutations: {
         changeModal(state, payload) {
-            state.modal = payload.modal;
+            state.modal = payload;
         }
     },
     actions: { },

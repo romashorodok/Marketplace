@@ -6,42 +6,41 @@
             <a class="app-btn" @click="logout">Log out</a>
         </div>
         <div class="header-action" v-else>
-            <a class="app-btn">Sign Up</a>
-            <a class="app-btn" @click="openModal">Login</a>
+            <a class="app-btn"
+               @click="openModal('register')">
+                Sign Up
+            </a>
+            <a class="app-btn"
+               @click="openModal('login')">
+                Login
+            </a>
         </div>
     </header>
     <main class="app-main">
         <router-view />
 
-        <div v-show="modal === 'register'">
-            <app-login @close="closeModal"></app-login>
-        </div>
+        <app-login v-show="modal === 'login'" @close="closeModal"/>
+        <app-register v-show="modal === 'register'" @close="closeModal" />
     </main>
 </template>
 
 <script>
 import AppLogin from '@components/login';
-import {mapState, mapMutations, useStore, mapActions} from "vuex";
+import AppRegister from '@components/register';
+import {mapState, mapMutations, mapActions} from "vuex";
 
 export default {
-    setup: () => ({ store: useStore() }),
     computed: mapState({
         modal: state => state.app.modal,
         token: state => state.user.token
     }),
     methods: {
-        openModal() {
-            this.store.commit({
-               type: "changeModal",
-               modal: 'register',
-            });
+        openModal(modalWindow) {
+            this.changeModal(modalWindow);
         },
 
         closeModal() {
-            this.store.commit({
-                type: "changeModal",
-                modal: 'closed',
-            });
+            this.changeModal('closed');
         },
 
         ...mapMutations({
@@ -49,6 +48,6 @@ export default {
         }),
         ...mapActions(['logout'])
     },
-    components: { AppLogin }
+    components: { AppLogin, AppRegister }
 }
 </script>

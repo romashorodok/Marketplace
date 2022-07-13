@@ -29,3 +29,15 @@
 .app-btn-link:hover {
     color: $fg-1;
 }
+
+.app-btn-link--right {
+    color: $text;
+    cursor: pointer;
+    user-select: none;
+    text-decoration: none;
+    align-self: end;
+}
+
+.app-btn-link--right:hover {
+    color: $fg-1;
+}
