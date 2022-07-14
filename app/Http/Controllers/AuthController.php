@@ -9,6 +9,8 @@ use App\Services\AuthenticateService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 
 class AuthController extends Controller
@@ -57,7 +59,7 @@ class AuthController extends Controller
     {
         $credentials = $request->validated();
         $password = $credentials['password'];
-        $credentials['password'] = \Hash::make($credentials['password']);
+        $credentials['password'] = Hash::make($credentials['password']);
 
         try {
             User::create($credentials);
@@ -88,7 +90,7 @@ class AuthController extends Controller
     {
 
         /* @var User $tokenUser */
-        $tokenUser = \Auth::guard('api')->user();
+        $tokenUser = Auth::guard('api')->user();
 
         if ($tokenUser->token()->user_id === $request->user()->id)
         {
