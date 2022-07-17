@@ -12,4 +12,5 @@ require('@/store');
 const app = createApp(App).use(router).use(store);
 
 store.dispatch('restoreToken')
-    .then(() => app.mount('#app'));
+    .then(() => app.mount('#app'))
+    .catch(() => app.mount('#app'));

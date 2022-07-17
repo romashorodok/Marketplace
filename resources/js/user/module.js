@@ -1,10 +1,17 @@
-import getAltAxis from "@popperjs/core/lib/utils/getAltAxis";
+import router from '@/router';
 
 const tokenKey = 'token';
+
+const config = (token) => ({
+    headers: {
+        Authorization: `Bearer ${token}`
+    }
+});
 
 export default {
     state: () => ({
         token: null,
+        user: null
     }),
     mutations: {
         authorize(state, payload) {
@@ -16,6 +23,10 @@ export default {
 
         unauthorize(state) {
             state.token = null;
+        },
+
+        setUser(state, payload) {
+            state.user = payload.account;
         }
     },
     actions: {
@@ -41,9 +52,11 @@ export default {
 
                 localStorage.removeItem(tokenKey);
                 context.commit('unauthorize');
+                await router.push('/');
             } catch (e) {
                 localStorage.removeItem(tokenKey);
                 context.commit('unauthorize');
+                await router.push('/');
             }
         },
 
@@ -58,6 +71,26 @@ export default {
                         //When registration complete, but server not send token
                         console.log("Success register, notify user");
                 });
+        },
+
+        async fetchUser(context) {
+            const token = localStorage.getItem(tokenKey);
+
+            const user = await axios.get('/api/account', config(token));
+
+            context.commit('setUser', user.data);
+
+            return context.getters.getUser;
+        },
+
+        async updateUser(context, user) {
+            const token = context.getters.getToken;
+
+            await axios.post('/api/account', user, config(token))
+                .then(console.log)
+                .catch(console.warn);
+
+            return context.getters.getUser;
         },
 
         async restoreToken(context) {
@@ -77,5 +110,8 @@ export default {
                 }
         }
     },
-    getters: {}
+    getters: {
+        getUser: (state) => state.user,
+        getToken: (state) => state.token,
+    }
 };

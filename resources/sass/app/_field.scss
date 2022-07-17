@@ -1,0 +1,25 @@
+.body-field {
+    display: flex;
+    flex-direction: column;
+
+    margin-top: 10px;
+
+    input {
+        margin: 0;
+        border: 1px solid $fg-1;
+        border-radius: 5px;
+        padding: 5px 10px;
+    }
+
+    input:focus {
+        outline: none;
+    }
+
+    label {
+        margin-bottom: 5px;
+    }
+
+    :last-child {
+        margin-top: 5px;
+    }
+}

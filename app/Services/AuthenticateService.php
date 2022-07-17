@@ -4,7 +4,6 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-use League\CommonMark\Util\ArrayCollection;
 
 class AuthenticateService
 {

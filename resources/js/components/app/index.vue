@@ -1,8 +1,11 @@
 <template>
-    <header class="app-header">
+    <div class="app-header">
         <router-link class="app-btn" to="/">Home</router-link>
 
         <div class="header-action" v-if="token">
+            <router-link class="app-btn" to="/account/profile">
+                My account
+            </router-link>
             <a class="app-btn" @click="logout">Log out</a>
         </div>
         <div class="header-action" v-else>
@@ -15,7 +18,7 @@
                 Login
             </a>
         </div>
-    </header>
+    </div>
     <main class="app-main">
         <router-view />
 
@@ -28,6 +31,7 @@
 import AppLogin from '@components/login';
 import AppRegister from '@components/register';
 import {mapState, mapMutations, mapActions} from "vuex";
+import { useRo } from 'vue-router';
 
 export default {
     computed: mapState({
@@ -48,6 +52,7 @@ export default {
         }),
         ...mapActions(['logout'])
     },
+
     components: { AppLogin, AppRegister }
 }
 </script>

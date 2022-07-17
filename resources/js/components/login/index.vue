@@ -56,7 +56,7 @@ export default {
             const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
             if (!emailRegex.test(this.credentials.email)) {
-                this.emailMessage = "Enter valid email";
+                this.emailMessage = "Enter email";
             } else {
                 this.emailMessage = null;
             }
@@ -71,7 +71,7 @@ export default {
                 this.login(this.credentials)
                     .then()
                     .catch(error => {
-                        this.passwordMessage = error.response.data.message
+                        this.passwordMessage = "Invalid credentials";
                     });
             }
         },

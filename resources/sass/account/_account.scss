@@ -1,0 +1,74 @@
+
+.account {
+    &-wrapper {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    &-body {
+        margin: auto;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 100px;
+
+        .list-group {
+            width: 200px;
+
+            .list-item {
+                .body-field {
+                    margin-bottom: 5px;
+                    margin-top: 0;
+
+                    input {
+                        margin: 0;
+                    }
+                }
+            }
+
+            .body-field {
+                display: flex;
+                flex-direction: column;
+            }
+        }
+
+        .profile-save-btn {
+            @extend .app-btn;
+
+            width: 100px;
+            background: $fg-2;
+            border: 1px solid $fg-2;
+        }
+
+        .profile-save-btn:hover {
+            color: $white;
+            background: $fg-2;
+            border: 1px solid $fg-2;
+        }
+
+        .profile-avatar-span {
+            min-width: 100px;
+            min-height: 200px;
+            border-radius: 100%;
+            background: gainsboro;
+            display: block;
+        }
+    }
+
+    &-profile-section {
+        display: flex;
+        width: 650px;
+        position: relative;
+        justify-content: center;
+        margin: 30px 0;
+
+        .profile-label {
+            top: 0;
+            left: 0;
+            position: absolute;
+            color: $fg-2;
+        }
+
+    }
+}

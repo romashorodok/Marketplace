@@ -6,9 +6,9 @@
 
         <title>Laravel</title>
 
-        <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+        <link href="{{ mix('css/app.css') }}" rel="stylesheet">
 
-        <script type="text/javascript" src="{{ asset('js/app.js') }}" defer></script>
+        <script type="text/javascript" src="{{ mix('js/app.js') }}" defer></script>
     </head>
     <body>
         <div id="app" class="app-wrapper">
