@@ -83,14 +83,10 @@ export default {
             return context.getters.getUser;
         },
 
-        async updateUser(context, user) {
+        updateUser(context, user) {
             const token = context.getters.getToken;
 
-            await axios.post('/api/account', user, config(token))
-                .then(console.log)
-                .catch(console.warn);
-
-            return context.getters.getUser;
+            return axios.post('/api/account', user, config(token));
         },
 
         async restoreToken(context) {

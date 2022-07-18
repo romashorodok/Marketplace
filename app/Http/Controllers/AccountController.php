@@ -3,16 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateCredentialRequest;
-use App\Models\User;
+use App\Services\AccountService;
 use App\Services\AuthenticateService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Hash;
 
 class AccountController extends Controller
 {
     public function __construct (
-        public AuthenticateService $authenticate
+        private AuthenticateService $authenticate,
+        private AccountService $account
     ) { }
 
     public function getAccount(Request $request): Response
@@ -26,32 +26,33 @@ class AccountController extends Controller
     {
         $credentials = $request->validated();
 
-        $user = $this->authenticate->getUser();
-
         if (isset($credentials['password'], $credentials['newPassword']))
         {
-            if (Hash::check($credentials['password'], $user->password))
-            {
-                User::whereId($user->id)
-                    ->update([
-                        ...$request->only(['firstName', 'lastName']),
-                        "password" => Hash::make($credentials['newPassword'])
-                    ]);
+            $result = $this->account->updatePassword(
+                $credentials['password'],
+                $credentials['newPassword']
+            );
 
+            if (!$result)
                 return response([
-                    "account" => $user
-                ], 200);
-            }
-
-            return response([
-
-            ], 200);
+                    "message" => "The password incorrect.",
+                ], 422);
         }
 
-        $user->update($credentials);
+        if (isset($credentials['firstName']) || isset($credentials['lastName']))
+        {
+            $result = $this->account->updateCredentials(
+                $request->only(['firstName', 'lastName'])
+            );
+
+            if (!$result)
+                return response([
+                    "message" => "Cannot update user credentials"
+                ], 422);
+        }
 
         return response([
-            "account" => $user,
+            "status" => "OK"
         ], 200);
     }
 }

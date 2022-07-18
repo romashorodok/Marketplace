@@ -53,7 +53,7 @@
 
 <script>
 import { computed } from 'vue';
-import { useStore, mapGetters } from "vuex";
+import {useStore, mapGetters } from "vuex";
 
 import ProfileField from './components/profile-field';
 
@@ -97,7 +97,16 @@ export default {
                             newPassword: this.newPassword }
                         : this.user;
 
-                    this.store.dispatch('updateUser', user);
+                    this.store.dispatch('updateUser', user)
+                        .then(this.resetPasswordFields)
+                        .catch(error => {
+                            switch (error.response.data.message) {
+                                case "The password incorrect.": {
+                                    this.messages.password = "The password incorrect.";
+                                    break;
+                                }
+                            }
+                        });
                 }
             }
         },
@@ -123,10 +132,10 @@ export default {
         validatePassword(password) {
             this.password = password;
 
-            // if (!this.validatePasswordRegex(password))
-            //     this.messages.password = "Minimum eight characters, one letter, one number";
-            // else
-            //     this.messages.password = null;
+            if (!this.validatePasswordRegex(password))
+                this.messages.password = "Minimum eight characters, one letter, one number";
+            else
+                this.messages.password = null;
         },
 
         validateNewPassword(password) {
@@ -136,12 +145,14 @@ export default {
                 this.messages.newPassword = "Minimum eight characters, one letter, one number";
             else
                 this.messages.newPassword = null;
+
+            this.validateConfirmNewPassword(this.confirmNewPassword);
         },
 
         validateConfirmNewPassword(password) {
             this.confirmNewPassword = password;
 
-            if (!this.confirmNewPassword === this.newPassword) {
+            if (!(this.confirmNewPassword === this.newPassword)) {
                 this.messages.confirmNewPassword = "Password must be same";
             }
             else if (this.confirmNewPassword === this.password) {
@@ -163,7 +174,12 @@ export default {
 
         isSame(source, target) {
             return JSON.stringify(source) === JSON.stringify(target)
+        },
+
+        resetPasswordFields() {
+            this.password = this.confirmNewPassword = this.newPassword = null;
         }
+
     },
     computed:  {
         ...mapGetters(['getUser'])

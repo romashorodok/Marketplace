@@ -17,7 +17,7 @@ class AuthController extends Controller
 {
 
     public function __construct(
-        public AuthenticateService $authenticate,
+        private AuthenticateService $authenticate,
     )
     {
         $this->middleware('client.credentials')
