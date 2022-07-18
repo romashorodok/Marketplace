@@ -23,6 +23,7 @@ export default {
 
         unauthorize(state) {
             state.token = null;
+            localStorage.removeItem(tokenKey);
         },
 
         setUser(state, payload) {
@@ -40,21 +41,14 @@ export default {
         },
 
         async logout(context) {
-            const token = localStorage.getItem(tokenKey);
+            const token = context.getters.getToken;
 
             try {
-                //TODO: add axios interceptor for bearer token.
-                await axios.get('/api/logout', {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
+                await axios.get('/api/logout', config(token));
 
-                localStorage.removeItem(tokenKey);
                 context.commit('unauthorize');
                 await router.push('/');
             } catch (e) {
-                localStorage.removeItem(tokenKey);
                 context.commit('unauthorize');
                 await router.push('/');
             }
@@ -94,11 +88,7 @@ export default {
 
             if (token)
                 try {
-                    await axios.get('/api/token', {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    });
+                    await axios.get('/api/token', config(token));
 
                     context.commit('authorize', token);
                 } catch (e) {
