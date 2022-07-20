@@ -15,3 +15,4 @@ use App\Http\Controllers\AuthController;
 */
 
 Route::get('/', fn() => view('index'));
+Route::view('/{any}', 'index')->where('any', '.*');

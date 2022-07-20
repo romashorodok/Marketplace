@@ -1,0 +1,21 @@
+@use "@style/responsive" as *;
+
+.filter {
+    &-wrapper {
+        display: flex;
+        height: 100vh;
+
+        @include desktop {
+            min-width: 250px;
+        }
+
+        @include tablet {
+            min-width: 180px;
+        }
+
+        @include mobile {
+            /* Make it as modal */
+            min-width: 0;
+        }
+    }
+}

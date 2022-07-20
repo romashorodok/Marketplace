@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,4 +34,8 @@ Route::group(['middleware' => ['auth', 'auth:api']], function(){
 Route::group(['middleware' => ['auth:api', 'client.credentials']], function () {
     Route::get('account', [AccountController::class, 'getAccount']);
     Route::post('account', [AccountController::class, 'updateAccount']);
+});
+
+Route::group([], function() {
+    Route::get('product', [ProductController::class, 'getProduct']);
 });

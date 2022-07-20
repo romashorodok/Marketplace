@@ -1,0 +1,55 @@
+@use "@style/responsive" as *;
+
+.product {
+    &-wrapper {
+        display: grid;
+        width: 100%;
+
+        padding: 0 40px 0 0;
+
+        @include tablet {
+            grid-template-columns: repeat(3, 1fr);
+            padding: 0;
+        }
+
+        @include desktop {
+            grid-template-columns: repeat(5, 1fr);
+        }
+
+        @include mobile {
+            grid-template-columns: repeat(2, 1fr);
+            padding: 0;
+        }
+    }
+
+    &-card {
+        .card {
+            &-wrapper {
+                position: relative;
+                height: 100%;
+                padding: 14px;
+            }
+
+            &-image {
+                display: block;
+                background: grey;
+                height: 180px;
+                cursor: pointer;
+            }
+
+            &-name {
+                display: block;
+                height: 60px;
+                overflow: hidden;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+            &-price {
+                display: block;
+                height: 30px;
+                overflow: hidden;
+            }
+        }
+    }
+}

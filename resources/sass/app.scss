@@ -1,3 +1,5 @@
+@use 'responsive' as *;
+
 @import 'variables';
 
 @import '~bootstrap/scss/bootstrap';
@@ -7,9 +9,13 @@
 @import "./app/button";
 @import "./app/modal";
 @import "./app/field";
+@import "./app/filter";
 
 @import "./account/sidebar";
 @import "./account/account";
+
+@import "./product/product";
+
 
 html {
     width: 100vw;
