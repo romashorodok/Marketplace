@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,4 +39,8 @@ Route::group(['middleware' => ['auth:api', 'client.credentials']], function () {
 
 Route::group([], function() {
     Route::get('product', [ProductController::class, 'getProduct']);
+});
+
+Route::group([], function() {
+    Route::get('category', [CategoryController::class, 'getCategories']);
 });

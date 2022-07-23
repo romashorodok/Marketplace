@@ -5,7 +5,6 @@
         display: grid;
         width: 100%;
 
-        padding: 0 40px 0 0;
 
         @include tablet {
             grid-template-columns: repeat(3, 1fr);
@@ -14,6 +13,7 @@
 
         @include desktop {
             grid-template-columns: repeat(5, 1fr);
+            padding: 0 40px;
         }
 
         @include mobile {
@@ -35,6 +35,7 @@
                 background: grey;
                 height: 180px;
                 cursor: pointer;
+                border-radius: 5px;
             }
 
             &-name {
@@ -43,6 +44,7 @@
                 overflow: hidden;
                 text-decoration: none;
                 cursor: pointer;
+                color: black;
             }
 
             &-price {
@@ -52,4 +54,12 @@
             }
         }
     }
+
+}
+
+.pagination-wrapper {
+    margin-top: 30px;
+    margin-bottom: 50px;
+    margin-left: 15px;
+
 }

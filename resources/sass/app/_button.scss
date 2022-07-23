@@ -15,6 +15,12 @@
     font-size: 18px;
 }
 
+.app-btn-active {
+    background: $fg-1_hover;
+    color: $fg-1;
+    border: 1px solid $fg-1;
+}
+
 .app-btn:hover {
     background: $fg-1_hover;
     color: $fg-1;
@@ -28,8 +34,9 @@
     text-decoration: none;
 }
 
+
 .app-btn-link:hover {
-    color: $fg-1;
+    color: $fg-1 !important;
 }
 
 .app-btn-link--right {
