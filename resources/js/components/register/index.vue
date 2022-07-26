@@ -6,42 +6,32 @@
             </h3>
         </template>
         <template v-slot:modal-body>
-            <form @submit="checkForm">
-                <div class="body-field">
-                    <label>First name</label>
-                    <input v-model="firstName" type="text">
-                    <p v-show="firstNameMessage" class="error-message">
-                        {{ firstNameMessage }}
-                    </p>
-                </div>
-                <div class="body-field">
-                    <label>Last name</label>
-                    <input v-model="lastName" type="text">
-                    <p v-show="lastNameMessage" class="error-message">
-                        {{ lastNameMessage }}
-                    </p>
-                </div>
-                <div class="body-field">
-                    <label>Email</label>
-                    <input v-model="email" type="email">
-                    <p v-show="emailMessage" class="error-message">
-                        {{ emailMessage }}
-                    </p>
-                </div>
-                <div class="body-field">
-                    <label>Password</label>
-                    <input v-model="password" type="password">
-                    <p v-show="passwordMessage" class="error-message">
-                        {{ passwordMessage }}
-                    </p>
-                </div>
-                <div class="body-field">
-                    <label>Password confirmation</label>
-                    <input v-model="passwordConfirm" type="password">
-                    <p v-show="passwordConfirmMessage" class="error-message">
-                        {{ passwordConfirmMessage }}
-                    </p>
-                </div>
+            <form @submit.prevent="checkForm">
+                <app-field label="First name"
+                           v-model:model="firstName"
+                           v-model:messages="messages.firstName"
+                           v-on:validate="firstNameValidator.validate" />
+
+                <app-field label="Last name"
+                           v-model:model="lastName"
+                           v-model:messages="messages.lastName"
+                           v-on:validate="lastNameValidator.validate" />
+
+                <app-field label="Email"
+                           v-model:model="email"
+                           v-model:messages="messages.email"
+                           v-on:validate="emailValidator.validate" />
+
+                <app-field label="Password"
+                           v-model:model="password"
+                           v-model:messages="messages.password"
+                           v-on:validate="passwordValidator.validate" />
+
+                <app-field label="Password confirmation"
+                           v-model:model="passwordConfirm"
+                           v-model:messages="messages.passwordConfirm"
+                           v-on:validate="passwordConfirmValidator.validate" />
+
                 <button class="modal-register-confirm app-btn"
                         type="submit">
                     Submit
@@ -56,8 +46,11 @@
 </template>
 
 <script>
-import { mapActions, mapMutations } from "vuex";
+import { mapMutations } from "vuex";
 import AppModal from '@/shared/modal';
+import AppField from '@/shared/field';
+import useValidator from "@/shared/hooks/useValidator";
+import { isValidMessages } from "@/shared/hooks/useValidator";
 
 export default {
     data: () => ({
@@ -67,75 +60,112 @@ export default {
         passwordConfirm: null,
         email: null,
 
-        firstNameMessage: null,
-        lastNameMessage: null,
-        passwordMessage: null,
-        passwordConfirmMessage: null,
-        emailMessage: null
+        messages: { },
     }),
+
+    computed: {
+        firstNameValidator() {
+            return useValidator({
+                target: this.firstName,
+                messages: this.messages,
+                rules: [
+                    { type: "name", name: "firstName", message: "First name required" }
+                ]
+            })
+        },
+
+        lastNameValidator() {
+            return useValidator({
+                target: this.lastName,
+                messages: this.messages,
+                rules: [
+                    { type: "name", name: "lastName", message: "Last name required" }
+                ]
+            })
+        },
+
+        emailValidator() {
+            return useValidator({
+                target: this.email,
+                messages: this.messages,
+                rules: [
+                    { type: "email", name: "email", message: "Enter valid email" }
+                ]
+            })
+        },
+
+        passwordValidator() {
+
+            return useValidator({
+                target: this.password,
+                messages: this.messages,
+                rules: [
+                    { type: "required", name: "password", message: "Password required" },
+                    { type: "password", name: "password", message: "Minimum eight characters, one letter, one number" }
+                ]
+            });
+        },
+
+        passwordConfirmValidator() {
+            const samePassword = (target) => {
+                return target === this.password
+            };
+
+            return useValidator({
+                target: this.passwordConfirm,
+                messages: this.messages,
+                rules: [
+                    { type: "required", name: "passwordConfirm", message: "Password confirm required" },
+                    {
+                        type: "callback",
+                        alias: "passwordConfirmSame",
+                        name: "passwordConfirm",
+                        message: "Password must be same",
+                        callback: samePassword
+                    }
+                ]
+            });
+        }
+    },
+
     methods: {
-        checkForm(event) {
-            const nameRegex = /\b([A-ZÀ-ÿ][-,a-z. ']+[ ]*)+/;
-            const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-            const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        checkForm() {
+            this.validateFields();
 
-            if (!nameRegex.test(this.firstName))
-                this.firstNameMessage = "Enter valid fist name";
-            else
-                this.firstNameMessage = null;
-
-            if (!nameRegex.test(this.lastName))
-                this.lastNameMessage = "Enter valid last name";
-            else
-                this.lastNameMessage = null;
-
-            if (!emailRegex.test(this.email))
-                this.emailMessage = "Enter valid email";
-            else
-                this.emailMessage = null;
-
-            if (!passwordRegex.test(this.password))
-                this.passwordMessage = "Minimum eight characters, one letter, one number";
-            else
-                this.passwordMessage = null;
-
-            if (this.password !== this.passwordConfirm)
-                this.passwordConfirmMessage = "Password must be same";
-            else
-                this.passwordConfirmMessage = null;
-
-            if (!this.firstNameMessage
-                && !this.lastNameMessage
-                && !this.emailMessage
-                && !this.passwordMessage
-                && !this.passwordConfirmMessage
-            ) {
-                axios.post('/api/register', {
-                    firstName: this.firstName,
-                    lastName: this.lastName,
-                    password: this.password,
-                    email: this.email,
-                })
-                    .then(result => {
-                        if(result.data.token)
-                            this.authorize(result.data.token);
-                        else
-                            console.log("Success register, notify user");
-
-                        this.changeModal('closed');
+            if (isValidMessages(this.messages.value)) {
+                    axios.post('/api/register', {
+                        firstName: this.firstName,
+                        lastName: this.lastName,
+                        password: this.password,
+                        email: this.email,
                     })
-                    .catch(error => {
-                        switch (error.response.data.message) {
-                            case "The email has already been taken.": {
-                                this.emailMessage = "The email has already been taken.";
-                            }
-                        }
+                        .then(result => {
+                            if(result.data.token)
+                                this.authorize(result.data.token);
+                            else
+                                console.log("Success register, notify user");
 
-                        console.log(error);
-                    });
+                            this.changeModal('closed');
+                        })
+                        .catch(error => {
+                            switch (error.response.data.message) {
+                                case "The email has already been taken.": {
+                                    this.messages.email.taken = "The email has already been taken.";
+                                }
+                            }
+
+                            console.log(error);
+                        });
             }
 
-            event.preventDefault();
+        },
+
+        validateFields() {
+            this.firstNameValidator.validate();
+            this.lastNameValidator.validate();
+            this.emailValidator.validate();
+            this.passwordValidator.validate();
+            this.passwordConfirmValidator.validate();
         },
 
         redirectLogin() {
@@ -147,6 +177,9 @@ export default {
             authorize: "authorize"
         })
     },
-    components: { AppModal }
+    components: {
+        AppModal,
+        AppField
+    }
 }
 </script>
