@@ -6,24 +6,26 @@ namespace App\Services;
 
 use App\Exceptions\CredentialsUpdateException;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\MessageBag;
 
 class AccountService
 {
     public function __construct(
-        private AuthenticateService $authenticate
+        private AuthenticateService $authenticate,
+        private MessageBag $messageBag
     ) {}
 
     /**
      * @throws CredentialsUpdateException
      */
-    private function updatePassword(string $oldPassword, string $newPassword): void
+    private function updatePassword(string $oldPassword, string $passwordNew): void
     {
         $user = $this->authenticate->getUser();
 
         if (Hash::check($oldPassword, $user->password))
         {
             $result =  $user->update([
-                "password" => Hash::make($newPassword),
+                "password" => Hash::make($passwordNew),
             ]);
 
             if (!$result)
@@ -31,6 +33,8 @@ class AccountService
 
             return;
         }
+
+        $this->messageBag->add('password', "Invalid password");
 
         throw new CredentialsUpdateException("Invalid credentials");
     }
@@ -45,8 +49,11 @@ class AccountService
             "lastName" => $lastName
         ]);
 
-        if (!$result)
+        if (!$result) {
+            $this->messageBag->add('firstName', "Cannot update");
+            $this->messageBag->add('lastName', "Cannot update");
             throw new CredentialsUpdateException();
+        }
     }
 
     /**
@@ -54,10 +61,10 @@ class AccountService
      */
     public function update(array $credentials): void
     {
-        if (isset($credentials['password'], $credentials['newPassword']))
+        if (isset($credentials['password'], $credentials['passwordNew']))
             $this->updatePassword(
                 $credentials['password'],
-                $credentials['newPassword']
+                $credentials['passwordNew']
             );
 
         if (isset($credentials['firstName']) && isset($credentials['lastName']))

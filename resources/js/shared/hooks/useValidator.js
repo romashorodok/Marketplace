@@ -2,7 +2,9 @@ const emailPattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+")
 const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
 const namePattern = /\b([A-ZÀ-ÿ][-,a-z. ']+[ ]*)+/;
 
-export default ({ target , rules, messages }) => {
+export default ({ target , rules, messages, nullable = false }) => {
+
+    const nullableRule = (nullable && (target === '' || target === null));
 
     const deleteField = (name, type) => {
         if (!messages[name]) return;
@@ -30,7 +32,7 @@ export default ({ target , rules, messages }) => {
     };
 
     const regex = ({ type, name, message, regex }) => {
-        if (regex instanceof RegExp && regex.test(target))
+        if (regex instanceof RegExp && regex.test(target) || nullableRule )
             deleteField(name, type);
         else
             updateField(name, type, message);

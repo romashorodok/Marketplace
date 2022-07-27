@@ -1,5 +1,5 @@
 <template>
-    <form @submit="checkForm">
+    <form @submit.prevent="checkForm">
         <section class="account-profile-section">
             <h4 class="profile-label">Avatar</h4>
             <ul class="list-group">
@@ -11,38 +11,54 @@
         <section class="account-profile-section">
             <h4 class="profile-label">Profile</h4>
             <ul class="list-group">
-                <profile-field label="First name"
-                               :model="user.firstName"
-                               :message="messages.firstName"
-                               @on-change="validateFirstName" />
-                <profile-field label="Last name"
-                               :model="user.lastName"
-                               :message="messages.lastName"
-                               @on-change="validateLastName" />
+                <li class="list-item">
+                    <app-field label="First name"
+                               v-model:model="firstName"
+                               v-model:messages="messages.firstName"
+                               v-on:validate="firstNameValidator.validate" />
+                </li>
+                <li class="list-item">
+                    <app-field label="Last name"
+                               v-model:model="lastName"
+                               v-model:messages="messages.lastName"
+                               v-on:validate="lastNameValidator.validate" />
+                </li>
             </ul>
         </section>
         <section class="account-profile-section">
             <h4 class="profile-label">Credentials</h4>
             <ul class="list-group">
-                <profile-field label="Email"
-                               :model="user.email"
-                               :message="messages.email"
-                               :disabled="true" />
-                <profile-field label="Current password"
-                               :model="password"
+                <li class="list-item">
+                    <app-field label="Email"
+                               v-model:model="email"
+                               v-model:messages="messages.email"
+                               :type="'email'"
+                               :disabled="true"
+                               v-on:validate="emailValidator.validate" />
+                </li>
+
+                <li class="list-item">
+                    <app-field label="Current password"
+                               v-model:model="password"
+                               v-model:messages="messages.password"
                                :type="'password'"
-                               :message="messages.password"
-                               @on-change="validatePassword"/>
-                <profile-field label="New password"
-                               :model="newPassword"
+                               v-on:validate="passwordValidator.validate" />
+                </li>
+
+                <li class="list-item">
+                    <app-field label="New password"
+                               v-model:model="passwordNew"
+                               v-model:messages="messages.passwordNew"
                                :type="'password'"
-                               :message="messages.newPassword"
-                               @on-change="validateNewPassword"/>
-                <profile-field label="Confirm new password"
-                               :model="confirmNewPassword"
+                               v-on:validate="passwordNewValidator.validate" />
+                </li>
+                <li class="list-item">
+                    <app-field label="New password confirm"
+                               v-model:model="passwordNewConfirm"
+                               v-model:messages="messages.passwordNewConfirm"
                                :type="'password'"
-                               :message="messages.confirmNewPassword"
-                               @on-change="validateConfirmNewPassword"/>
+                               v-on:validate="passwordNewConfirmValidator.validate" />
+                </li>
             </ul>
         </section>
         <button class="profile-save-btn" type="submit">
@@ -52,10 +68,15 @@
 </template>
 
 <script>
-import { computed } from 'vue';
 import {useStore, mapGetters } from "vuex";
-
 import ProfileField from './components/profile-field';
+import useValidator from "@/shared/hooks/useValidator";
+import {
+    isValidMessages,
+    addServerMessageErrors,
+    deleteServerMessageErrors,
+} from "@/shared/hooks/useValidator";
+import AppField from '@/shared/field';
 
 export default {
     setup: async () => {
@@ -64,126 +85,153 @@ export default {
         await store.dispatch('fetchUser');
 
         return {
-            user: computed(() => Object
-                .assign({}, store.getters.getUser)),
             store
         };
     },
+
     data: () => ({
-        messages: [],
+        firstName: null,
+        lastName: null,
         password: null,
-        newPassword: null,
-        confirmNewPassword: null
+        passwordNew: null,
+        passwordNewConfirm: null,
+        email: null,
+
+        messages: { },
     }),
+
+    mounted() {
+        Object.assign(this, {...this.store.getters.getUser})
+    },
+
     methods: {
-        checkForm(event) {
-            event.preventDefault();
+        checkForm() {
+            this.validateFields();
+            this.handleServerError();
 
-            if (!this.isSame(this.user, this.getUser)
-                || this.password
-                || this.newPassword
-                || this.confirmNewPassword
-            ) {
-                if (!this.messages.firstName
-                    && !this.messages.lastName
-                    && !this.messages.email
-                    && !this.messages.password
-                    && !this.messages.newPassword
-                    && !this.messages.confirmNewPassword
-                ) {
-                    const user = this.password && this.newPassword
-                        ? { ...this.user,
-                            password: this.password,
-                            newPassword: this.newPassword }
-                        : this.user;
+            if (isValidMessages(this.messages)) {
 
-                    this.store.dispatch('updateUser', user)
-                        .then(this.resetPasswordFields)
-                        .catch(error => {
-                            switch (error.response.data.message) {
-                                case "The password incorrect.": {
-                                    this.messages.password = "The password incorrect.";
-                                    break;
-                                }
-                            }
-                        });
-                }
+                const userForm = {
+                    firstName: this.firstName,
+                    lastName: this.lastName,
+                    email: this.email,
+                };
+
+                const passwordCondition = this.password && this.passwordNew && this.passwordNewConfirm && this.passwordNew === this.passwordNewConfirm;
+
+                const user = passwordCondition
+                    ? {
+                        ...userForm,
+                        password: this.password,
+                        passwordNew: this.passwordNew,
+                        passwordNewConfirm: this.passwordNewConfirm
+                    }
+                    : userForm;
+
+                this.store.dispatch('updateUser', user)
+                    .then(this.resetPasswordFields)
+                    .catch(result => {
+                        const errors = result.response.data.errors;
+
+                        addServerMessageErrors(this.messages, errors);
+                    });
             }
         },
 
-        validateFirstName(firstName) {
-            this.user.firstName = firstName;
-
-            if (!this.validateNameRegex(firstName))
-                this.messages.firstName = "Enter valid first name";
-            else
-                this.messages.firstName = null;
+        validateFields() {
+            this.firstNameValidator.validate();
+            this.lastNameValidator.validate();
+            this.emailValidator.validate();
+            this.passwordValidator.validate();
+            this.passwordNewValidator.validate();
+            this.passwordNewConfirmValidator.validate();
         },
 
-        validateLastName(lastName) {
-            this.user.lastName = lastName;
-
-            if (!this.validateNameRegex(lastName))
-                this.messages.lastName = "Enter valid last name";
-            else
-                this.messages.lastName = null;
-        },
-
-        validatePassword(password) {
-            this.password = password;
-
-            if (!this.validatePasswordRegex(password))
-                this.messages.password = "Minimum eight characters, one letter, one number";
-            else
-                this.messages.password = null;
-        },
-
-        validateNewPassword(password) {
-            this.newPassword = password;
-
-            if (!this.validatePasswordRegex(password))
-                this.messages.newPassword = "Minimum eight characters, one letter, one number";
-            else
-                this.messages.newPassword = null;
-
-            this.validateConfirmNewPassword(this.confirmNewPassword);
-        },
-
-        validateConfirmNewPassword(password) {
-            this.confirmNewPassword = password;
-
-            if (!(this.confirmNewPassword === this.newPassword)) {
-                this.messages.confirmNewPassword = "Password must be same";
-            }
-            else if (this.confirmNewPassword === this.password) {
-                this.messages.confirmNewPassword = "The new password must not match the current";
-            }
-            else
-                this.messages.confirmNewPassword = null;
-        },
-
-        validatePasswordRegex(password) {
-            const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;;
-            return regex.test(password);
-        },
-
-        validateNameRegex(name) {
-            const regex = /\b([A-ZÀ-ÿ][-,a-z. ']+[ ]*)+/;
-            return regex.test(name);
-        },
-
-        isSame(source, target) {
-            return JSON.stringify(source) === JSON.stringify(target)
+        handleServerError() {
+            deleteServerMessageErrors(this.messages);
         },
 
         resetPasswordFields() {
-            this.password = this.confirmNewPassword = this.newPassword = null;
+            this.password = this.passwordNew = this.passwordNewConfirm = null;
         }
-
     },
+
     computed:  {
+        firstNameValidator() {
+            return useValidator({
+                target: this.firstName,
+                messages: this.messages,
+                rules: [
+                    { type: "name", name: "firstName", message: "First name required" }
+                ]
+            })
+        },
+
+        lastNameValidator() {
+            return useValidator({
+                target: this.lastName,
+                messages: this.messages,
+                rules: [
+                    { type: "name", name: "lastName", message: "Last name required" }
+                ]
+            })
+        },
+
+        emailValidator() {
+            return useValidator({
+                target: this.email,
+                messages: this.messages,
+                rules: [
+                    { type: "email", name: "email", message: "Enter valid email" }
+                ]
+            })
+        },
+
+        passwordValidator() {
+            return useValidator({
+                target: this.password,
+                messages: this.messages,
+                nullable: true,
+                rules: [
+                    { type: "password", name: "password", message: "Minimum eight characters, one letter, one number" }
+                ]
+            });
+        },
+
+        passwordNewValidator() {
+            return useValidator({
+                target: this.passwordNew,
+                messages: this.messages,
+                nullable: true,
+                rules: [
+                    { type: "password", name: "passwordNew", message: "Minimum eight characters, one letter, one number" }
+                ]
+            });
+        },
+
+        passwordNewConfirmValidator() {
+            const samePassword = (target) => {
+                return target === this.passwordNew
+            };
+
+            return useValidator({
+                target: this.passwordNewConfirm,
+                messages: this.messages,
+                rules: [
+                    {
+                        type: "callback",
+                        alias: "passwordConfirmSame",
+                        name: "passwordNewConfirm",
+                        message: "New password must be same",
+                        callback: samePassword
+                    }
+                ]
+            });
+        },
+
         ...mapGetters(['getUser'])
     },
-    components: { ProfileField }
+
+    components: { ProfileField, AppField }
 }
 </script>

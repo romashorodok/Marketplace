@@ -29,9 +29,9 @@ class UpdateCredentialRequest extends FormRequest
         return [
             'firstName' => 'string',
             'lastName' => 'string',
-            'password' => 'string'.
+            'password' => 'string|'.
                 'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/i',
-            'newPassword' => 'string'.
+            'passwordNew' => 'string|'.
                 'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/i'
         ];
     }

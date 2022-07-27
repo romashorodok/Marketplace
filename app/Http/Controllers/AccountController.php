@@ -7,12 +7,14 @@ use App\Http\Requests\UpdateCredentialRequest;
 use App\Services\AccountService;
 use App\Services\AuthenticateService;
 use Illuminate\Http\Response;
+use Illuminate\Support\MessageBag;
 
 class AccountController extends Controller
 {
     public function __construct (
         private AuthenticateService $authenticate,
-        private AccountService $account
+        private AccountService $account,
+        private MessageBag $messageBag
     ) { }
 
     public function getAccount(): Response
@@ -31,6 +33,7 @@ class AccountController extends Controller
 
         } catch (CredentialsUpdateException $e) {
             return response([
+                "errors" => $this->messageBag->getMessages(),
                 "message" => $e->getMessage()
             ], 422);
         }
