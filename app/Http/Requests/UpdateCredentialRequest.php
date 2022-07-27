@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateCredentialRequest extends FormRequest
@@ -13,7 +14,10 @@ class UpdateCredentialRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        $tokenUser = $this->user('api');
+        $sessionUser = $this->user();
+
+        return $tokenUser->can('update', $sessionUser);
     }
 
     /**
@@ -26,8 +30,10 @@ class UpdateCredentialRequest extends FormRequest
         return [
             'firstName' => 'string',
             'lastName' => 'string',
-            'password' => 'string',
-            'newPassword' => 'string'
+            'password' => 'string'.
+                'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/i',
+            'newPassword' => 'string'.
+                'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/i'
         ];
     }
 }

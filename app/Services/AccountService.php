@@ -26,7 +26,7 @@ class AccountService
                 "password" => Hash::make($newPassword),
             ]);
 
-            if ($result == 0)
+            if (!$result)
                 throw new CredentialsUpdateException();
 
             return;
@@ -45,7 +45,7 @@ class AccountService
             "lastName" => $lastName
         ]);
 
-        if ($result == 0)
+        if (!$result)
             throw new CredentialsUpdateException();
     }
 
