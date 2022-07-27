@@ -27,8 +27,8 @@ class UpdateCredentialRequest extends FormRequest
     public function rules()
     {
         return [
-            'firstName' => 'string',
-            'lastName' => 'string',
+            'firstName' => 'required|string',
+            'lastName' => 'required|string',
             'password' => 'string|'.
                 'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/i',
             'passwordNew' => 'string|'.
