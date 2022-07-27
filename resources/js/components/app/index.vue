@@ -31,7 +31,6 @@
 import AppLogin from '@components/login';
 import AppRegister from '@components/register';
 import {mapState, mapMutations, mapActions} from "vuex";
-import { useRo } from 'vue-router';
 
 export default {
     computed: mapState({

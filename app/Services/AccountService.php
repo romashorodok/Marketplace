@@ -27,7 +27,7 @@ class AccountService
             ]);
 
             if ($result == 0)
-                throw  new CredentialsUpdateException();
+                throw new CredentialsUpdateException();
 
             return;
         }
