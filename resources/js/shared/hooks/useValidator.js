@@ -71,8 +71,8 @@ export function isValidMessages (messages) {
 
     for(const message of Object.values(messages)) {
         if (Object.keys(message).length !== 0 ) {
-                isValid = false;
-                break;
+            isValid = false;
+            break;
         }
     }
 
