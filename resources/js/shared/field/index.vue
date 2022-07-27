@@ -9,12 +9,14 @@
             @input="$emit('update:model', $event.target.value)"
         >
 
-        <p class="error-message"
-           v-show="messages"
-           v-for="(message) in messages"
-        >
-            {{ message }}
-        </p>
+        <template v-for="message in messages">
+            <p class="error-message" v-if="message instanceof Array" v-for="_message in message">
+                {{ _message }}
+            </p>
+            <p class="error-message" v-else>
+                {{ message }}
+            </p>
+        </template>
     </div>
 </template>
 

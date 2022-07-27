@@ -69,12 +69,32 @@ export default ({ target , rules, messages }) => {
 export function isValidMessages (messages) {
     let isValid = true;
 
-    for(const message in messages) {
-        if (Object.keys(message).length !== 0) {
-            isValid = false;
-            break;
+    for(const message of Object.values(messages)) {
+        if (Object.keys(message).length !== 0 ) {
+                isValid = false;
+                break;
         }
     }
 
     return isValid;
+}
+
+export function addServerMessageErrors (messages, errors) {
+    const fields = Object.keys(errors);
+
+    for (const field of fields) {
+        const fieldMessages = errors[field].map(val => {
+            return val;
+        });
+
+        Object.assign(messages, {[field]: { server: fieldMessages } });
+    }
+}
+
+export function deleteServerMessageErrors (messages) {
+    for (const message of Object.values(messages)) {
+        if (message.server) {
+            delete message.server;
+        }
+    }
 }

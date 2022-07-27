@@ -20,16 +20,19 @@
                 <app-field label="Email"
                            v-model:model="email"
                            v-model:messages="messages.email"
+                           :type="'email'"
                            v-on:validate="emailValidator.validate" />
 
                 <app-field label="Password"
                            v-model:model="password"
                            v-model:messages="messages.password"
+                           :type="'password'"
                            v-on:validate="passwordValidator.validate" />
 
                 <app-field label="Password confirmation"
                            v-model:model="passwordConfirm"
                            v-model:messages="messages.passwordConfirm"
+                           :type="'password'"
                            v-on:validate="passwordConfirmValidator.validate" />
 
                 <button class="modal-register-confirm app-btn"
@@ -46,11 +49,15 @@
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import {mapActions, mapMutations} from "vuex";
 import AppModal from '@/shared/modal';
 import AppField from '@/shared/field';
 import useValidator from "@/shared/hooks/useValidator";
-import { isValidMessages } from "@/shared/hooks/useValidator";
+import {
+    isValidMessages,
+    addServerMessageErrors,
+    deleteServerMessageErrors,
+} from "@/shared/hooks/useValidator";
 
 export default {
     data: () => ({
@@ -131,33 +138,26 @@ export default {
     methods: {
         checkForm() {
             this.validateFields();
+            this.handleServerError();
 
-            if (isValidMessages(this.messages.value)) {
-                    axios.post('/api/register', {
-                        firstName: this.firstName,
-                        lastName: this.lastName,
-                        password: this.password,
-                        email: this.email,
-                    })
-                        .then(result => {
-                            if(result.data.token)
-                                this.authorize(result.data.token);
-                            else
-                                console.log("Success register, notify user");
+            if (isValidMessages(this.messages)) {
+                this.register({
+                    firstName: this.firstName,
+                    lastName: this.lastName,
+                    password: this.password,
+                    email: this.email
+                })
+                    .then(() => this.changeModal('closed'))
+                    .catch(result => {
+                        const errors = result.response.data.errors;
 
-                            this.changeModal('closed');
-                        })
-                        .catch(error => {
-                            switch (error.response.data.message) {
-                                case "The email has already been taken.": {
-                                    this.messages.email.taken = "The email has already been taken.";
-                                }
-                            }
-
-                            console.log(error);
-                        });
+                        addServerMessageErrors(this.messages, errors);
+                    });
             }
+        },
 
+        handleServerError() {
+            deleteServerMessageErrors(this.messages);
         },
 
         validateFields() {
@@ -175,7 +175,8 @@ export default {
         ...mapMutations({
             changeModal: "changeModal",
             authorize: "authorize"
-        })
+        }),
+        ...mapActions(['register'])
     },
     components: {
         AppModal,

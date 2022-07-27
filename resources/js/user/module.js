@@ -1,3 +1,5 @@
+import getAltAxis from "@popperjs/core/lib/utils/getAltAxis";
+
 const tokenKey = 'token';
 
 export default {
@@ -43,6 +45,19 @@ export default {
                 localStorage.removeItem(tokenKey);
                 context.commit('unauthorize');
             }
+        },
+
+        register(context, credentials) {
+            return axios.post('/api/register', credentials)
+                .then(resp => resp.data.token)
+                .then(token => {
+                    if (token)
+                        //Login user
+                        context.commit('authorize', token);
+                    else
+                        //When registration complete, but server not send token
+                        console.log("Success register, notify user");
+                });
         },
 
         async restoreToken(context) {
