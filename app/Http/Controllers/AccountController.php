@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\CredentialsUpdateException;
 use App\Http\Requests\UpdateCredentialRequest;
 use App\Services\AccountService;
 use App\Services\AuthenticateService;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class AccountController extends Controller
@@ -15,7 +15,7 @@ class AccountController extends Controller
         private AccountService $account
     ) { }
 
-    public function getAccount(Request $request): Response
+    public function getAccount(): Response
     {
         return response([
             "account" => $this->authenticate->getUser()
@@ -26,29 +26,13 @@ class AccountController extends Controller
     {
         $credentials = $request->validated();
 
-        if (isset($credentials['password'], $credentials['newPassword']))
-        {
-            $result = $this->account->updatePassword(
-                $credentials['password'],
-                $credentials['newPassword']
-            );
+        try {
+            $this->account->update($credentials);
 
-            if (!$result)
-                return response([
-                    "message" => "The password incorrect.",
-                ], 422);
-        }
-
-        if (isset($credentials['firstName']) || isset($credentials['lastName']))
-        {
-            $result = $this->account->updateCredentials(
-                $request->only(['firstName', 'lastName'])
-            );
-
-            if (!$result)
-                return response([
-                    "message" => "Cannot update user credentials"
-                ], 422);
+        } catch (CredentialsUpdateException $e) {
+            return response([
+                "message" => $e->getMessage()
+            ], 422);
         }
 
         return response([
