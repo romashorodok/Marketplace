@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\Product;
 use App\Repository\ProductRepository;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ProductService
 {
@@ -12,8 +12,17 @@ class ProductService
         private ProductRepository $repository
     ) { }
 
-    public function filterByCategories(array $categories): Builder|Product
+    public function filterByCategories(array $categories, string|int $size): LengthAwarePaginator
     {
-        return $this->repository->getProductByCategories($categories);
+        $query = $this->repository->getProductByCategories($categories);
+
+        return $this->repository->paginateWithImageAndCategory($query, $size);
+    }
+
+    public function getRandomProducts(string|int $size)
+    {
+        $query = Product::query();
+
+        return $this->repository->paginateWithImageAndCategory($query, $size);
     }
 }

@@ -2,7 +2,12 @@
     <ul class="product-wrapper">
         <li class="product-card" v-for="product in products">
             <div class="card-wrapper">
-                <a class="card-image" />
+                <img v-if="product.image?.image_path"
+                     v-bind:src="product.image?.image_path"
+                     class="card-image"
+                     alt="">
+                <a v-else class="card-image--grey"/>
+
                 <a class="app-btn-link card-name"> {{ product.name }} </a>
                 <p class="card-price"> {{ product.price }}</p>
                 <p v-show="product.category?.name">

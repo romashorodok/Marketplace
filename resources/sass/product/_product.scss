@@ -32,10 +32,16 @@
 
             &-image {
                 display: block;
-                background: grey;
                 height: 180px;
+                width: 180px;
                 cursor: pointer;
                 border-radius: 5px;
+                object-fit: contain;
+            }
+
+            &-image--grey {
+                @extend .card-image;
+                background: grey;
             }
 
             &-name {
