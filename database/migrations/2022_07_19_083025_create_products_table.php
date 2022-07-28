@@ -21,7 +21,7 @@ return new class extends Migration
             $table->decimal('price', 10,2);
             $table->integer('count');
 
-            $table->unsignedBigInteger('category_id');
+            $table->unsignedBigInteger('category_id')->nullable();
         });
 
         Schema::table('products', function (Blueprint $table) {

@@ -3,42 +3,34 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Services\ProductService;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
+    public function __construct(
+        private ProductService $product
+    ) {}
+
     public function getProduct(Request $request): Response
     {
-        $paginationSize = $request->get('size') ?? 50;
+        $paginationSize = $request->get('size') ?? 20;
 
         $categories = explode(',', $request->get('categories'));
 
-        if (!empty($categories[0]))
-        {
-
-            $test = DB::table('products')
-                ->join('categories', 'products.category_id', '=', 'categories.id')
-                ->select('products.*', 'categories.*');
-
-
-            foreach ($categories as $category)
-            {
-                $test->orWhere('categories.name', 'like', "%{$category}%");
-            }
-
-
-
-            return response([
-                "products" => $test->orderByDesc('price', 'DESC')
-                    ->paginate($paginationSize)
+        if (!empty($categories[0])) {
+            return response(["products" =>
+                $this->product->filterByCategories($categories)
+                    ->with('category')
+                    ->paginate()
                     ->appends("size", $paginationSize)
+                    ->appends('categories', $request->get('categories'))
             ], 200);
         }
 
         return response([
-            "products" => Product::inRandomOrder()
+            "products" => Product::inRandomOrder('1')
                 ->orderByDesc('id')
                 ->paginate($paginationSize)
                 ->appends("size", $paginationSize),

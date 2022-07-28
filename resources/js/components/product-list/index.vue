@@ -5,6 +5,9 @@
                 <a class="card-image" />
                 <a class="app-btn-link card-name"> {{ product.name }} </a>
                 <p class="card-price"> {{ product.price }}</p>
+                <p v-show="product.category?.name">
+                    Category: {{ product.category?.name }}
+                </p>
             </div>
         </li>
     </ul>
@@ -13,7 +16,7 @@
        <a v-for="(page, index) in pages"
           class="app-btn"
           @click="changePage(index)"
-          v-bind:class="[index === (currentPage) - 1 ? 'app-btn-active' : '' ]"
+          v-bind:class="[page.label === currentPage.toString() ? 'app-btn-active' : '' ]"
        >
            {{ page.label }}
        </a>

@@ -1,3 +1,4 @@
+import product from "@components/product-list/product";
 
 const mapProductToState = (context, product) => {
     context.commit('setProducts', {
@@ -47,7 +48,7 @@ export default {
 
                 await context.commit('setPages', products.links);
 
-                mapProductToState(context, products)
+                mapProductToState(context, products);
 
                 return products;
             }
@@ -62,7 +63,8 @@ export default {
                 axios.get(nextPage.url)
                     .then(req => req.data.products)
                     .then(page => {
-                        mapProductToState(context, page)
+                        mapProductToState(context, page);
+                        context.commit('setPages', page.links);
                     })
         }
 
