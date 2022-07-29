@@ -4,18 +4,18 @@
             <h4 class="section-heading">
                 Categories
             </h4>
-            <div v-for="category in categories">
-                <input type="checkbox"
-                       v-bind:name="category.name"
-                       v-bind:id="category.name"
-                       @change="onChangeCategory"
-                >
-                <label class="app-btn-link" v-bind:for="category.name">
+            <div v-for="category in categories" class="filter-field">
+                <label class="container" v-bind:for="category.name">
+                    <input type="checkbox"
+                           v-bind:name="category.name"
+                           v-bind:id="category.name"
+                           @change="onChangeCategory"
+                    >
+
+                    <span class="checkmark" />
                     {{ category.name }}
                 </label>
             </div>
-        </section>
-        <section class="filter-section">
         </section>
     </div>
 </template>

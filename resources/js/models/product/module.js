@@ -1,4 +1,3 @@
-import product from "@components/product-list/product";
 
 const mapProductToState = (context, product) => {
     context.commit('setProducts', {
@@ -6,6 +5,28 @@ const mapProductToState = (context, product) => {
         products: product.data
     });
 };
+
+const MOBILE = 18;
+const TABLET = 30;
+const DESKTOP = 50;
+
+const getPageSize = () => {
+    const width  = window.innerWidth || document.documentElement.clientWidth ||
+        document.body.clientWidth;
+
+    if (width <= 667)
+        return MOBILE;
+    else if (width <= 1024)
+        return TABLET;
+    else
+        return DESKTOP;
+};
+
+const getPaginationSizeQuery = () => {
+    return new URLSearchParams({
+        size: getPageSize()
+    });
+}
 
 export default {
     state: () => ({
@@ -26,7 +47,11 @@ export default {
 
     actions: {
         fetchProducts(context) {
-            return axios.get('/api/product')
+            const pageSizeQuery = getPaginationSizeQuery();
+
+            return axios.get('/api/product', {
+                params: pageSizeQuery
+            })
                 .then(req => req.data.products)
                 .then(products => {
 
@@ -38,10 +63,16 @@ export default {
 
         async fetchProductsByFilters(context) {
             const filterQuery = await context.dispatch('getQueryURL');
+            const pageSizeQuery = getPaginationSizeQuery();
+
+            const query = new URLSearchParams({
+                ...Object.fromEntries(filterQuery),
+                ...Object.fromEntries(pageSizeQuery)
+            });
 
             if (filterQuery.get('filter') !== '') {
                 const products = await axios.get('/api/product', {
-                    params: filterQuery
+                    params: query
                 }).then(req => req.data.products);
 
                 console.log(products)
@@ -59,8 +90,12 @@ export default {
         changePage(context, page) {
             const nextPage = context.getters.getPages[page];
 
+            const pageSizeQuery = getPaginationSizeQuery();
+
             if (nextPage.label !== "...")
-                axios.get(nextPage.url)
+                return axios.get(nextPage.url, {
+                    params: pageSizeQuery
+                })
                     .then(req => req.data.products)
                     .then(page => {
                         mapProductToState(context, page);

@@ -28,13 +28,13 @@ class DatabaseSeeder extends Seeder
 //            $product->update(["image_id" => $images->random()->id]);
 //        });
 
-        Product::factory(100)->create([
+        Product::factory(400)->create([
             "image_id" => Image::factory()
         ]);
 
         User::factory(10)->create();
 
-        $this->test_users();
+//        $this->test_users();
     }
 
     public function test_users() {

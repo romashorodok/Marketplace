@@ -9,10 +9,10 @@
                 <a v-else class="card-image--grey"/>
 
                 <a class="app-btn-link card-name"> {{ product.name }} </a>
-                <p class="card-price"> {{ product.price }}</p>
                 <p v-show="product.category?.name">
                     Category: {{ product.category?.name }}
                 </p>
+                <p class="card-price"> {{ product.price }}</p>
             </div>
         </li>
     </ul>
@@ -47,7 +47,13 @@ export default {
 
     methods: {
         changePage(page) {
-           this.store.dispatch('changePage', page);
+            if (page + 1 !== this.currentPage)
+                this.store.dispatch('changePage', page)
+                    .then(() => window.scrollTo({
+                        top: 0,
+                        left: 0,
+                        behavior: 'smooth'
+                    }));
         }
     },
 
