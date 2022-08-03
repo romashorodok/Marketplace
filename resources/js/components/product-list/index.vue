@@ -1,22 +1,9 @@
 <template>
     <ul class="product-wrapper">
         <li class="product-card" v-for="product in products">
-            <div class="card-wrapper">
-                <img v-if="product.image?.image_path"
-                     v-bind:src="product.image?.image_path"
-                     class="card-image"
-                     alt="">
-                <a v-else class="card-image--grey"/>
-
-                <a class="app-btn-link card-name"> {{ product.name }} </a>
-                <p v-show="product.category?.name">
-                    Category: {{ product.category?.name }}
-                </p>
-                <p class="card-price"> {{ product.price }}</p>
-            </div>
+            <app-product :product="product" />
         </li>
     </ul>
-
     <div class="pagination-wrapper">
        <a v-for="(page, index) in pages"
           class="app-btn"
@@ -26,11 +13,11 @@
            {{ page.label }}
        </a>
     </div>
-
 </template>
 
 <script>
 import {useStore, mapGetters} from "vuex";
+import AppProduct from "./product";
 
 export default {
     setup: async () => {
@@ -63,6 +50,8 @@ export default {
             pages: "getPages",
             currentPage: "getCurrentPage"
         }),
-    }
+    },
+
+    components: { AppProduct }
 }
 </script>
