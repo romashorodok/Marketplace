@@ -71,7 +71,6 @@
 
             .product-card {
                 .card-image {
-                    width: 80px;
                     height: 120px;
                 }
             }
@@ -91,7 +90,7 @@
             &-image {
                 display: block;
                 height: 180px;
-                width: 180px;
+                width: 100%;
                 cursor: pointer;
                 border-radius: 5px;
                 object-fit: contain;
