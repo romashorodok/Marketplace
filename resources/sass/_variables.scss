@@ -3,12 +3,18 @@ $white: #ffffff;
 $body-bg: $white;
 
 $bg-1: $white;
+$bg-1_filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(157deg) brightness(102%) contrast(101%);
+
 $head-bg: #eef2f5;
 
 $text: black;
 
 $fg-1: #ef8374;
+$fg-1_filter: invert(74%) sepia(25%) saturate(3696%) hue-rotate(312deg) brightness(100%) contrast(88%);
 $fg-1_hover: #fceae8;
+
+$fg-3: #a9a9a9;
+$fg-3_filter: invert(82%) sepia(7%) saturate(0%) hue-rotate(269deg) brightness(97%) contrast(93%);
 
 $fg-2: #03749c;
 $fg-2_hover: #15b1d7;

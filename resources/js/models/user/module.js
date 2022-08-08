@@ -1,4 +1,5 @@
 import router from '@/router';
+import {useCart} from "@/composables/useCart";
 
 const tokenKey = 'token';
 
@@ -35,9 +36,11 @@ export default {
             const response = await axios.post('/api/login', credential);
 
             if (response.data.token) {
-                context.commit('authorize', response.data.token);
+                await context.commit('authorize', response.data.token);
                 context.commit('changeModal', 'closed');
             }
+
+            await useCart().fetchCart();
         },
 
         async logout(context) {

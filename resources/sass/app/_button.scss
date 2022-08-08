@@ -27,13 +27,29 @@
     border: 1px solid $fg-1;
 }
 
+.app-btn.app-btn-link {
+    color: $white;
+}
+
+.app-btn:hover.app-btn-link {
+    color: $fg-1;
+
+    .cart-img {
+        filter: $fg-1_filter;
+    }
+
+    .cart-count {
+        background: $fg-1;
+        color: $white;
+    }
+}
+
 .app-btn-link {
     color: $text;
     cursor: pointer;
     user-select: none;
     text-decoration: none;
 }
-
 
 .app-btn-link:hover {
     color: $fg-1 !important;

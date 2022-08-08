@@ -33,4 +33,9 @@ class ProductService
 
         return $this->product->count();
     }
+
+    public function getProductById(int $id): Builder
+    {
+        return Product::whereId($id)->with(['image']);
+    }
 }

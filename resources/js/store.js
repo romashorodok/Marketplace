@@ -14,6 +14,6 @@ export default createStore({
 
         user: userModule,
         product: productModule,
-        category: categoryModule
+        category: categoryModule,
     },
 });

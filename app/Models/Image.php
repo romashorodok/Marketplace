@@ -13,6 +13,8 @@ class Image extends Model
 
     protected $fillable = ['path'];
 
+    protected $hidden = ['id'];
+
     public $timestamps = false;
 
     public function product()

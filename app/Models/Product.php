@@ -16,6 +16,12 @@ class Product extends Model
 
     protected $with = ['image', 'category'];
 
+    protected $hidden = ['category_id', 'image_id'];
+
+    protected $casts = [
+        'price' => 'double'
+    ];
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
