@@ -62,7 +62,7 @@ const messages = {
 const {validate, hasError, resetServerErrors, setServerErrors} = useForm(schema, messages);
 const store = useStore();
 
-watch(schema, validate);
+watch(schema, () => validate(true));
 
 const checkForm = () => {
     validate();

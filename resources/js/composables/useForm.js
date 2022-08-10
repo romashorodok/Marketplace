@@ -23,9 +23,11 @@ export function useForm(schema, errorMessages = defaultErrorMessage) {
     };
 
 
-    const validate = () => {
+    const validate = (soft = false) => {
         for (const field of Object.values(schema)) {
             for (const rule of field.rules) {
+                if (field.initial && soft) return;
+
                 try {
                     const result = applyRule(rule, field.value);
                     if (!result)

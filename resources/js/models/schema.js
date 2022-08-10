@@ -1,4 +1,4 @@
-import {computed, ref} from "vue";
+import {computed, ref, watch} from "vue";
 
 const emailPattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
@@ -31,6 +31,7 @@ class Schema {
     errors = ref({});
     errorsServer = ref({});
     _name = null;
+    initial = true;
 
     get messages() {
         return computed(() => ({...this.errors, ...this.errorsServer}));
@@ -38,6 +39,11 @@ class Schema {
 
     constructor(value) {
         this.value = ref(value);
+
+        const unwatch = watch(this.value, () => {
+            this.initial = false;
+            unwatch();
+        });
     }
 
     #mapRule(name, {...args} = null) {
