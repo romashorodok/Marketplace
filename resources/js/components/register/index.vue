@@ -8,32 +8,27 @@
         <template v-slot:modal-body>
             <form @submit.prevent="checkForm">
                 <app-field label="First name"
-                           v-model:model="firstName"
-                           v-model:messages="messages.firstName"
-                           v-on:validate="firstNameValidator.validate" />
+                           v-model:model="schema.firstName.value"
+                           :messages="schema.firstName.messages"/>
 
                 <app-field label="Last name"
-                           v-model:model="lastName"
-                           v-model:messages="messages.lastName"
-                           v-on:validate="lastNameValidator.validate" />
+                           v-model:model="schema.lastName.value"
+                           :messages="schema.lastName.messages"/>
 
                 <app-field label="Email"
-                           v-model:model="email"
-                           v-model:messages="messages.email"
+                           v-model:model="schema.email.value"
                            :type="'email'"
-                           v-on:validate="emailValidator.validate" />
+                           :messages="schema.email.messages"/>
 
                 <app-field label="Password"
-                           v-model:model="password"
-                           v-model:messages="messages.password"
+                           v-model:model="schema.password.value"
                            :type="'password'"
-                           v-on:validate="passwordValidator.validate" />
+                           :messages="schema.password.messages"/>
 
                 <app-field label="Password confirmation"
-                           v-model:model="passwordConfirm"
-                           v-model:messages="messages.passwordConfirm"
+                           v-model:model="schema.passwordConfirm.value"
                            :type="'password'"
-                           v-on:validate="passwordConfirmValidator.validate" />
+                           :messages="schema.passwordConfirm.messages"/>
 
                 <button class="modal-register-confirm app-btn"
                         type="submit">
@@ -41,146 +36,63 @@
                 </button>
             </form>
             <a class="modal-register-margin app-btn-link--right"
-               @click="redirectLogin()">
+               @click="toLogin">
                 Log In
             </a>
         </template>
     </app-modal>
 </template>
 
-<script>
-import {mapActions, mapMutations} from "vuex";
+<script setup>
+import {watch} from "vue";
+import {useStore} from "vuex";
+import {defSchema, useForm} from "@/composables/useForm";
 import AppModal from '@/shared/modal';
 import AppField from '@/shared/field';
-import useValidator from "@/shared/hooks/useValidator";
-import {
-    isValidMessages,
-    addServerMessageErrors,
-    deleteServerMessageErrors,
-} from "@/shared/hooks/useValidator";
+import {schemaField} from "@/models/schema";
 
-export default {
-    data: () => ({
-        firstName: null,
-        lastName: null,
-        password: null,
-        passwordConfirm: null,
-        email: null,
+const schema = defSchema({
+    firstName: schemaField().name(),
+    lastName: schemaField().name(),
+    email: schemaField().email(),
+    password: schemaField().password(),
+    passwordConfirm: schemaField()
+        .password()
+        .same(() => schema?.password.value)
+});
 
-        messages: { },
-    }),
-
-    computed: {
-        firstNameValidator() {
-            return useValidator({
-                target: this.firstName,
-                messages: this.messages,
-                rules: [
-                    { type: "name", name: "firstName", message: "First name required" }
-                ]
-            })
-        },
-
-        lastNameValidator() {
-            return useValidator({
-                target: this.lastName,
-                messages: this.messages,
-                rules: [
-                    { type: "name", name: "lastName", message: "Last name required" }
-                ]
-            })
-        },
-
-        emailValidator() {
-            return useValidator({
-                target: this.email,
-                messages: this.messages,
-                rules: [
-                    { type: "email", name: "email", message: "Enter valid email" }
-                ]
-            })
-        },
-
-        passwordValidator() {
-
-            return useValidator({
-                target: this.password,
-                messages: this.messages,
-                rules: [
-                    { type: "required", name: "password", message: "Password required" },
-                    { type: "password", name: "password", message: "Minimum eight characters, one letter, one number" }
-                ]
-            });
-        },
-
-        passwordConfirmValidator() {
-            const samePassword = (target) => {
-                return target === this.password
-            };
-
-            return useValidator({
-                target: this.passwordConfirm,
-                messages: this.messages,
-                rules: [
-                    { type: "required", name: "passwordConfirm", message: "Password confirm required" },
-                    {
-                        type: "callback",
-                        alias: "passwordConfirmSame",
-                        name: "passwordConfirm",
-                        message: "Password must be same",
-                        callback: samePassword
-                    }
-                ]
-            });
-        }
-    },
-
-    methods: {
-        checkForm() {
-            this.validateFields();
-            this.handleServerError();
-
-            if (isValidMessages(this.messages)) {
-                this.register({
-                    firstName: this.firstName,
-                    lastName: this.lastName,
-                    password: this.password,
-                    email: this.email
-                })
-                    .then(() => this.changeModal('closed'))
-                    .catch(result => {
-                        const errors = result.response.data.errors;
-
-                        addServerMessageErrors(this.messages, errors);
-                    });
-            }
-        },
-
-        handleServerError() {
-            deleteServerMessageErrors(this.messages);
-        },
-
-        validateFields() {
-            this.firstNameValidator.validate();
-            this.lastNameValidator.validate();
-            this.emailValidator.validate();
-            this.passwordValidator.validate();
-            this.passwordConfirmValidator.validate();
-        },
-
-        redirectLogin() {
-            this.changeModal('login');
-        },
-
-        ...mapMutations({
-            changeModal: "changeModal",
-            authorize: "authorize"
-        }),
-        ...mapActions(['register'])
-    },
-    components: {
-        AppModal,
-        AppField
+const messages = {
+    firstName: {regex: 'First name required'},
+    lastName: {regex: 'Last name required'},
+    email: {regex: 'Enter valid email'},
+    password: {regex: 'Minimum eight characters, one letter, one number'},
+    passwordConfirm: {
+        regex: 'Minimum eight characters, one letter, one number',
+        same: 'Password must be same'
     }
-}
+};
+
+const {validate, hasError, setServerErrors, resetServerErrors} = useForm(schema, messages);
+const store = useStore();
+
+watch(schema, validate);
+
+const checkForm = () => {
+    validate();
+
+    if (!hasError()) {
+        resetServerErrors();
+        store.dispatch('register', {
+            firstName: schema.firstName.value,
+            lastName: schema.lastName.value,
+            password: schema.password.value,
+            email: schema.email.value
+        })
+            .then(() => store.commit('changeModal', 'closed'))
+            .catch(({response}) => {
+                setServerErrors(response.data.errors);
+            });
+    }
+};
+const toLogin = () => store.commit('changeModal', 'login');
 </script>

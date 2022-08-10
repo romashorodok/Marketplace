@@ -6,26 +6,19 @@
 
         <template v-slot:modal-body>
             <section class="modal-login-auth">
-                <div class="body-field">
-                    <label>Email</label>
-                    <input v-model="credentials.email" type="email">
-                    <p v-show="emailMessage" class="error-message">
-                        {{ emailMessage }}
-                    </p>
-                </div>
-                <div class="body-field">
-                    <label>Password</label>
-                    <input v-model="credentials.password" type="password">
-                    <p v-show="passwordMessage" class="error-message">
-                        {{ passwordMessage }}
-                    </p>
-                </div>
-
-                <button
-                    class="login-confirm app-btn"
-                    @click="checkForm">
-                    Login
-                </button>
+                <form @submit.prevent="checkForm">
+                    <app-field label="Email"
+                               v-model:model="schema.email.value"
+                               :type="'email'"
+                               :messages="schema.email.messages"/>
+                    <app-field label="Password"
+                               v-model:model="schema.password.value"
+                               :type="'password'"
+                               :messages="schema.password.messages"/>
+                    <button class="login-confirm app-btn" type="submit">
+                        Login
+                    </button>
+                </form>
             </section>
             <section class="modal-login-oauth">
                 <span class="oauth-divider">or</span>
@@ -46,54 +39,43 @@
     </app-modal>
 </template>
 
-<script>
+<script setup>
+import {defSchema, useForm} from "@/composables/useForm";
+import {schemaField} from "@/models/schema";
+import {watch} from "vue";
+import AppField from '@/shared/field';
 import AppModal from '@/shared/modal';
-import { mapActions, mapMutations } from "vuex";
+import {useStore} from "vuex";
 
-export default {
-    methods: {
-        checkForm() {
-            const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-            if (!emailRegex.test(this.credentials.email)) {
-                this.emailMessage = "Enter email";
-            } else {
-                this.emailMessage = null;
-            }
+const schema = defSchema({
+    email: schemaField().email(),
+    password: schemaField().password()
+});
 
-            if (!this.credentials.password) {
-                this.passwordMessage = "Enter password";
-            } else {
-                this.passwordMessage = null;
-            }
+const messages = {
+    email: {regex: 'Enter valid email'},
+    password: {regex: 'Minimum eight characters, one letter, one number'}
+};
 
-            if (!this.emailMessage && !this.passwordMessage) {
-                this.login(this.credentials)
-                    .then()
-                    .catch(error => {
-                        this.passwordMessage = "Invalid credentials";
-                    });
-            }
-        },
 
-        redirectRegister() {
-            this.changeModal('register');
-        },
+const {validate, hasError, resetServerErrors, setServerErrors} = useForm(schema, messages);
+const store = useStore();
 
-        ...mapMutations({ changeModal: 'changeModal' }),
-        ...mapActions(['login'])
-    },
-    data: () => {
-        return {
-            credentials: {
-                email: null,
-                password: null
-            },
+watch(schema, validate);
 
-            emailMessage: null,
-            passwordMessage: null
-        }
-    },
-    components: {AppModal}
-}
+const checkForm = () => {
+    validate();
+
+    if (!hasError()) {
+        resetServerErrors();
+        store.dispatch('login', {
+            email: schema.email.value,
+            password: schema.password.value
+        })
+            .catch(({response}) => {
+                setServerErrors(response.data.errors);
+            });
+    }
+};
 </script>
