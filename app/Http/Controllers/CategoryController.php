@@ -7,7 +7,7 @@ use App\Models\Category;
 
 class CategoryController extends Controller
 {
-    public function  getCategories(Request $request): Response
+    public function getCategories(): Response
     {
         return response([
             "categories" => Category::groupBy('name')
