@@ -40,7 +40,7 @@ class PaginateService
      */
     public function getPagination(array $items, int $page, int $size, int $totalCount): array
     {
-        $totalPages = intval($totalCount / $size);
+        $totalPages = intval(ceil($totalCount / $size));
 
         if ($page > $totalPages || $page < 1)
             throw new PaginationException('Undefined page');
@@ -130,7 +130,7 @@ class PaginateService
             return $page ? $currentRoute.'?'.$query : null;
         };
 
-        $link = fn($page) => ["page" => $page, 'links' => $makeLink($page)];
+        $link = fn($page) => ["number" => $page, 'link' => $makeLink($page)];
 
         return array_map($link, $pagination);
     }

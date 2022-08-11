@@ -1,7 +1,7 @@
 <template>
     <div class="card-wrapper">
-        <img v-if="product.image?.image_path"
-             :src="product.image?.image_path"
+        <img v-if="product.image?.path"
+             :src="product.image?.path"
              class="card-image"
              loading="lazy"
              alt="">

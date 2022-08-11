@@ -19,7 +19,7 @@ class ImageFactory extends Factory
     public function definition()
     {
         return [
-            'image_path' => Storage::disk('public')->putFile('images', $this->faker->imagePath)
+            'path' => Storage::disk('public')->putFile('images', $this->faker->imagePath)
         ];
     }
 

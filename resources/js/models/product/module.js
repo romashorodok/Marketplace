@@ -1,7 +1,6 @@
-
 const mapProductToState = (context, product) => {
     context.commit('setProducts', {
-        page: product.current_page,
+        page: product.currentPage,
         products: product.data
     });
 };
@@ -11,7 +10,7 @@ const TABLET = 30;
 const DESKTOP = 50;
 
 const getPageSize = () => {
-    const width  = window.innerWidth || document.documentElement.clientWidth ||
+    const width = window.innerWidth || document.documentElement.clientWidth ||
         document.body.clientWidth;
 
     if (width <= 667)
@@ -35,13 +34,13 @@ export default {
         pages: []
     }),
     mutations: {
-        setProducts(state, { page, products }) {
+        setProducts(state, {page, products}) {
             state.pagination[page] = products;
             state.page = page;
         },
 
         setPages(state, payload) {
-            state.pages = payload.slice(1, -1);
+            state.pages = payload;
         }
     },
 
@@ -54,10 +53,9 @@ export default {
             })
                 .then(req => req.data.products)
                 .then(products => {
-
                     mapProductToState(context, products);
 
-                    context.commit('setPages', products.links);
+                    context.commit('setPages', products.pages);
                 });
         },
 
@@ -70,37 +68,29 @@ export default {
                 ...Object.fromEntries(pageSizeQuery)
             });
 
-            if (filterQuery.get('filter') !== '') {
-                const products = await axios.get('/api/product', {
-                    params: query
-                }).then(req => req.data.products);
+            const products = await axios.get('/api/product', {params: query})
+                .then(req => req.data.products);
 
-                console.log(products)
+            mapProductToState(context, products);
 
-                await context.commit('setPages', products.links);
+            await context.commit('setPages', products.pages);
 
-                mapProductToState(context, products);
-
-                return products;
-            }
-            else
-                console.log('empty filters');
+            return products;
         },
 
         changePage(context, page) {
-            const nextPage = context.getters.getPages[page];
-
+            const nextPage = context.getters.getPages.find(item => item.number === page);
             const pageSizeQuery = getPaginationSizeQuery();
 
-            if (nextPage.label !== "...")
-                return axios.get(nextPage.url, {
-                    params: pageSizeQuery
-                })
+            if (nextPage.link !== null)
+                return axios.get(nextPage.link, {params: pageSizeQuery})
                     .then(req => req.data.products)
-                    .then(page => {
-                        mapProductToState(context, page);
-                        context.commit('setPages', page.links);
-                    })
+                    .then(products => {
+                        mapProductToState(context, products);
+                        context.commit('setPages', products.pages);
+                    });
+
+            return Promise.reject('Unreachable page');
         }
 
     },

@@ -11,7 +11,7 @@ class Image extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['image_path'];
+    protected $fillable = ['path'];
 
     public $timestamps = false;
 
@@ -20,7 +20,7 @@ class Image extends Model
         return $this->belongsTo(Product::class);
     }
 
-    public function ImagePath(): Attribute
+    public function path(): Attribute
     {
         return Attribute::make(
             get: fn ($value, $attributes) => asset($value)

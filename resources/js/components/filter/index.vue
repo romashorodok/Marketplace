@@ -46,8 +46,13 @@ export default {
                 isAdd: event.target.checked
             });
 
-            await this.store.dispatch('fetchProductsByFilters');
-
+            await this.store.dispatch('fetchProductsByFilters')
+                .then(() => window.scrollTo({
+                    top: 0,
+                    left: 0,
+                    behavior: 'smooth'
+                }))
+                .catch(console.error);
         }
     },
 }

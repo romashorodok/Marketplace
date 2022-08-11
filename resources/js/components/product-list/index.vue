@@ -1,17 +1,16 @@
 <template>
     <ul class="product-wrapper">
         <li class="product-card" v-for="product in products">
-            <app-product :product="product" />
+            <app-product :product="product"/>
         </li>
     </ul>
     <div class="pagination-wrapper">
-       <a v-for="(page, index) in pages"
-          class="app-btn"
-          @click="changePage(index)"
-          v-bind:class="[page.label === currentPage.toString() ? 'app-btn-active' : '' ]"
-       >
-           {{ page.label }}
-       </a>
+        <a v-for="page in pages"
+           class="app-btn"
+           :class="[page.number === currentPage ? 'app-btn-active' : '']"
+           @click="changePage(page.number)">
+            {{ page.number }}
+        </a>
     </div>
 </template>
 
@@ -25,22 +24,19 @@ export default {
 
         await store.dispatch('fetchProducts');
 
-        return { store };
-    },
-
-    mounted() {
-      console.log(this.products)
+        return {store};
     },
 
     methods: {
         changePage(page) {
-            if (page + 1 !== this.currentPage)
+            if (page !== this.currentPage)
                 this.store.dispatch('changePage', page)
                     .then(() => window.scrollTo({
                         top: 0,
                         left: 0,
                         behavior: 'smooth'
-                    }));
+                    }))
+                    .catch(console.error);
         }
     },
 
@@ -52,6 +48,6 @@ export default {
         }),
     },
 
-    components: { AppProduct }
+    components: {AppProduct}
 }
 </script>

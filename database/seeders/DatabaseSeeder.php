@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Image;
@@ -17,27 +18,24 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        $categories = Category::factory(10)->create();
 
-        /**
-         * It's not work.
-         * When I query model only first 10 models get
-         */
-//        $images = Image::factory(10)->create();
-//
-//        Product::factory(100)->create()->each(function(Product $product) use ($images) {
-//            $product->update(["image_id" => $images->random()->id]);
-//        });
-
-        Product::factory(400)->create([
-            "image_id" => Image::factory()
-        ]);
+        Product::factory(400)
+            ->create([
+                'image_id' => Image::factory()
+            ])->each(function (Product $product) use ($categories) {
+                $product->update([
+                    'category_id' => $categories->random()->id
+                ]);
+            });
 
         User::factory(10)->create();
 
 //        $this->test_users();
     }
 
-    public function test_users() {
+    public function test_users()
+    {
         User::factory()->create([
             'email' => 'test@example.com',
             'password' => Hash::make('password'),
