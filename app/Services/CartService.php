@@ -50,8 +50,6 @@ class CartService
             return $cart;
         } catch (CartItemException $e) {
             $this->messageBag->add('cart_item', $e->getMessage());
-        } catch (ProductException $e) {
-            $this->messageBag->add('product', $e->getMessage());
         }
 
         throw new CartItemException('Cannot create cart item');

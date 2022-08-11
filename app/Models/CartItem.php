@@ -84,14 +84,7 @@ class CartItem extends Model
         if ($query->where('product_id', $productId)->exists())
             throw new CartItemException('Cart item already exist');
 
-        $product = Product::where('id', $productId)->exists();
-
-        if (!$product)
-            throw new ProductException("Can't find the product");
-
-        $fields = array_merge([
-            "product_id" => $productId
-        ], $fields);
+        $fields = array_merge(["product_id" => $productId], $fields);
 
         return $query->create($fields);
     }

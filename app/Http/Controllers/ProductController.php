@@ -15,9 +15,7 @@ class ProductController extends Controller
     public function __construct(
         private ProductService  $product,
         private PaginateService $paginate,
-    )
-    {
-    }
+    ) { }
 
     public function getProduct(Request $request): Response
     {
@@ -50,7 +48,7 @@ class ProductController extends Controller
 
     public function getProductById(int $id): Response
     {
-        $product = $this->product->getProductById($id)->first();
+        $product = $this->product->getProductById($id);
 
         return response(["product" => $product], 200);
     }

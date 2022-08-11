@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Models\Product;
 use App\Repository\ProductRepository;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 
 class ProductService
 {
@@ -34,8 +35,8 @@ class ProductService
         return $this->product->count();
     }
 
-    public function getProductById(int $id): Builder
+    public function getProductById(int $id): Collection|Product
     {
-        return Product::whereId($id)->with(['image']);
+        return Product::with('image')->find($id);
     }
 }
