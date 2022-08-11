@@ -1,28 +1,36 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\Product;
 use App\Repository\ProductRepository;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProductService
 {
-    public function __construct (
-        private ProductRepository $repository
+    public function __construct(
+        private ProductRepository $repository,
+        private Product           $product,
     ) { }
 
-    public function filterByCategories(array $categories, string|int $size): LengthAwarePaginator
+    public function getProducts(int $page = 1, int $size = 50, array $categories = []): Builder|Product
     {
-        $query = $this->repository->getProductByCategories($categories);
+        $products = $this->product->newQuery();
+        $products = $this->repository->getByPage($products, $page, $size);
 
-        return $this->repository->paginateWithImageAndCategory($query, $size);
+        if ($categories)
+            $products = $this->repository->getByCategories($products, $categories);
+
+        return $products;
     }
 
-    public function getRandomProducts(string|int $size)
+    public function getCountByCategory(array $category): int
     {
-        $query = Product::query();
+        if ($category)
+            return $this->repository->getByCategories($this->product->newQuery(), $category)->count();
 
-        return $this->repository->paginateWithImageAndCategory($query, $size);
+        return $this->product->count();
     }
 }

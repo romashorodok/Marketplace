@@ -1,28 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 class ProductRepository
 {
-    public function getProductByCategories(array $categories): Builder|Product
+    public function getByPage(Builder $query, int $page, int $size): Builder|Product
     {
-        /**
-         * Is it optimal? Or when is ORM paginate the query it will be optimized ?
-         */
-        return Product::whereHas('category', function (Builder $query) use ($categories) {
-            $query->whereIn('name', $categories);
-        });
+        return $query->offset(($page - 1) * $size)->limit($size);
     }
 
-    public function paginateWithImageAndCategory(Builder $query, string|int $size): LengthAwarePaginator
+    public function getByCategories(Builder $query, array $categories): Builder|Product
     {
-        return $query
-            ->with(['category', 'image'])
-            ->paginate($size)
-            ->appends("size", $size);
+        return $query->orWhereHas('category', function (Builder $query) use ($categories) {
+            $query->whereIn('name', $categories);
+        });
     }
 }
