@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Exceptions\PaginationException;
+use Illuminate\Routing\UrlGenerator;
+use Illuminate\Support\Arr;
 
 class PaginateService
 {
@@ -21,7 +23,7 @@ class PaginateService
      */
     protected int $pageSideDepth;
 
-    public function __construct()
+    public function __construct(private UrlGenerator $url)
     {
         $this->pageSideDepth = (3 * $this->pageDepth) - 1;
     }
@@ -116,10 +118,20 @@ class PaginateService
 
     private function mapLinks(array $pagination): array
     {
-        $map = function ($page) {
-            return ['page' => $page, 'link' => "link: $page"];
+        $currentRoute = $this->url->current();
+        $currentQuery = $this->url->getRequest()->query->all();
+
+        $makeLink = function ($page) use($currentQuery, $currentRoute): ?string
+        {
+            $page = $page === '...' ? null : $page;
+
+            $query = Arr::query(array_merge($currentQuery, ['page' => $page]));
+
+            return $page ? $currentRoute.'?'.$query : null;
         };
 
-        return array_map($map, $pagination);
+        $link = fn($page) => ["page" => $page, 'links' => $makeLink($page)];
+
+        return array_map($link, $pagination);
     }
 }
