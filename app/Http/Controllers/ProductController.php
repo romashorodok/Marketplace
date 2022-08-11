@@ -48,7 +48,7 @@ class ProductController extends Controller
         }
     }
 
-    public function getProductById(string $id): Response
+    public function getProductById(int $id): Response
     {
         $product = $this->product->getProductById($id)->first();
 

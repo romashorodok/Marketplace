@@ -1,5 +1,5 @@
 <template>
-    <div class="card-wrapper">
+    <div class="card-wrapper" @click="productDetailShow">
         <img v-if="product.image?.path"
              :src="product.image?.path"
              class="card-image"
@@ -29,13 +29,7 @@ const props = defineProps({
 
 const router = useRouter();
 
-const productDetailShow = (product) => {
-    if (product?.id)
-        router.push({
-            name: 'product-detail',
-            params: {
-                id: product.id
-            }
-        });
+const productDetailShow = () => {
+    router.push({name: 'product-detail', params: {id: props.product.id}});
 }
 </script>

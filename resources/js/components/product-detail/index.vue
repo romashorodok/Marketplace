@@ -3,7 +3,7 @@
         <h2 class="product-name">{{ product.name }}</h2>
         <section class="product-detail-content">
             <div class="product-images">
-                <img class="product-image--preview" :src="product.image?.image_path" alt=""/>
+                <img class="product-image--preview" :src="product.image?.path" alt=""/>
                 <div class="product-images--available">
                     <img v-for="image in product.images" src="" alt=""/>
                 </div>
@@ -28,7 +28,7 @@ import {useHttp} from "@/composables/useHttp";
 import {useCart} from "@/composables/useCart";
 
 const props = defineProps({
-    id: {required: true}
+    id: {required: true, type: Number}
 });
 
 const http = useHttp();

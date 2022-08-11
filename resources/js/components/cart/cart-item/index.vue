@@ -2,7 +2,7 @@
     <li class="cart-item">
         <div :property="product = item.product" class="item-wrapper">
             <section class="item-section">
-                <img :src="product.image?.image_path" alt=""/>
+                <img :src="product.image?.path" alt=""/>
                 <div class="item-section--spec">
                     <span>{{ product.name }}</span>
                     <div class="spec-list">
@@ -32,6 +32,7 @@
 
 <script setup>
 import {useCart} from "@/composables/useCart";
+import {debounce} from "@/shared/utils/debounce";
 
 const props = defineProps({
     item: {
@@ -42,18 +43,20 @@ const props = defineProps({
 
 const {updateCartItem, deleteCartItem} = useCart();
 
-const increaseQuantity = (cartItem) => {
-    const quantity = cartItem.quantity;
+const commitChanges = debounce((item) => updateCartItem(item.id, {quantity: item.quantity}), 700);
 
-    updateCartItem(cartItem.id, {quantity: quantity + 1});
+const increaseQuantity = (cartItem) => {
+    cartItem.quantity++;
+
+    commitChanges(cartItem);
 };
 
 const decreaseQuantity = (cartItem) => {
-    const quantity = cartItem.quantity;
+    cartItem.quantity--;
 
     if (quantity <= 1)
-        return;
+        cartItem.quantity = 1;
 
-    updateCartItem(cartItem.id, {quantity: quantity - 1})
+    commitChanges(cartItem);
 };
 </script>
