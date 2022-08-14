@@ -161,6 +161,22 @@
             }
         }
     }
+
+    &-empty {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        width: 100%;
+        min-height: 90vh;
+        color: $fg-3;
+
+        .empty-img {
+            width: 80px;
+            height: 100px;
+            filter: $fg-3_filter;
+        }
+    }
 }
 
 .__cart-section {

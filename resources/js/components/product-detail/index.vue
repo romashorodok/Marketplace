@@ -4,9 +4,6 @@
         <section class="product-detail-content">
             <div class="product-images">
                 <img class="product-image--preview" :src="product.image?.path" alt=""/>
-                <div class="product-images--available">
-                    <img v-for="image in product.images" src="" alt=""/>
-                </div>
             </div>
             <div class="product-description">
                 <div class="product-price">

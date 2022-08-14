@@ -1,5 +1,9 @@
 <template>
-    <div class="cart-content">
+    <div v-if="!cartItems" class="cart-empty">
+        <img class="empty-img" src="/icons/shopping-bag.svg" alt="empty"/>
+        <h4>Nothing here</h4>
+    </div>
+    <div v-else class="cart-content">
         <span class="cart-delete-products">
             <img src="/icons/close.svg" alt="close" @click="deleteCartItems"/>
         </span>

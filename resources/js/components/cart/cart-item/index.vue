@@ -52,11 +52,9 @@ const increaseQuantity = (cartItem) => {
 };
 
 const decreaseQuantity = (cartItem) => {
-    cartItem.quantity--;
-
-    if (quantity <= 1)
-        cartItem.quantity = 1;
-
-    commitChanges(cartItem);
+    if (cartItem.quantity > 1) {
+        cartItem.quantity--;
+        commitChanges(cartItem);
+    }
 };
 </script>
