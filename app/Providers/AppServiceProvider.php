@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Services\StripePaymentService;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\ServiceProvider;
+use Stripe\StripeClient;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -16,6 +18,10 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(MessageBag::class, function () {
             return new MessageBag();
+        });
+
+        $this->app->singleton(StripeClient::class, function() {
+            return new StripeClient(config('services.stripe.key'));
         });
     }
 
