@@ -1,3 +1,8 @@
+@mixin focus {
+    box-shadow: 0 0 2px 4px $fg-1_hover;
+    transition: box-shadow .2s;
+}
+
 .body-field {
     display: flex;
     flex-direction: column;
@@ -12,6 +17,7 @@
     }
 
     input:focus {
+        @include focus;
         outline: none;
     }
 

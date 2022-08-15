@@ -17,7 +17,7 @@
                     <h4>Total</h4>
                     <h4>{{ cart?.total_price }} ₴</h4>
                 </div>
-                <button class="app-btn">Continue</button>
+                <button class="app-btn" @click="showCheckout">Continue</button>
             </div>
         </div>
     </div>
@@ -27,8 +27,10 @@
 import {computed, onMounted} from "vue";
 import {useCart} from "@/composables/useCart";
 import AppCartItem from './cart-item';
+import {useRouter} from "vue-router";
 
 const {fetchCart, cart, deleteCartItems} = useCart();
+const router = useRouter();
 
 const cartItems = computed(() => {
     const items = cart.value?.billing_items ?? [];
@@ -38,4 +40,9 @@ const cartItems = computed(() => {
 });
 
 onMounted(async () => await fetchCart());
+
+const showCheckout = () => {
+    if (cartItems)
+        router.push({path: 'checkout'});
+};
 </script>
