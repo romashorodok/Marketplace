@@ -33,6 +33,11 @@ class CartService
         return $user->cart ?? $user->cart()->create();
     }
 
+    public function purge(): void
+    {
+        $this->getCart()->delete();
+    }
+
     /**
      * @param array $fields
      * @return Cart|Model

@@ -50,14 +50,12 @@ import {useStore} from "vuex";
 
 const schema = defSchema({
     email: schemaField().email(),
-    password: schemaField().password()
+    password: schemaField().required()
 });
 
 const messages = {
     email: {regex: 'Enter valid email'},
-    password: {regex: 'Minimum eight characters, one letter, one number'}
 };
-
 
 const {validate, hasError, resetServerErrors, setServerErrors} = useForm(schema, messages);
 const store = useStore();

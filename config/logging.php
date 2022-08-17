@@ -51,6 +51,12 @@ return [
     */
 
     'channels' => [
+        'payment' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/payment.log'),
+            'level' => 'critical'
+        ],
+
         'stack' => [
             'driver' => 'stack',
             'channels' => ['single'],

@@ -18,6 +18,21 @@ class StripePaymentServiceTest extends TestCase
                 'cvc' => 424
             ]
         ]);
+
+        return $token->id;
+    }
+
+    private function generateInvalidPaymentToken(StripeClient $client): string
+    {
+        $token = $client->tokens->create([
+            'card' => [
+                'number' => '4000000000000002',
+                'exp_month' => 04,
+                'exp_year' => now()->addYear()->format('Y'),
+                'cvc' => 424
+            ]
+        ]);
+
         return $token->id;
     }
 

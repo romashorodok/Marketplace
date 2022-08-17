@@ -61,7 +61,7 @@ class Cart extends Model
         $getAllPrices = fn (): array => array_map(fn($item) => $item['quantity_price'], $this->billingItems->toArray());
 
         return Attribute::make(
-            get: fn() => number_format(array_sum($getAllPrices()), 2, '.', '')
+            get: fn() => floatval(array_sum($getAllPrices()))
         );
     }
 

@@ -25,7 +25,7 @@ import {useHttp} from "@/composables/useHttp";
 import {useCart} from "@/composables/useCart";
 
 const props = defineProps({
-    id: {required: true, type: Number}
+    id: {required: true, type: String}
 });
 
 const http = useHttp();

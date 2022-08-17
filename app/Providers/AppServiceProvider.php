@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\Interfaces\PaymentService;
 use App\Services\StripePaymentService;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\ServiceProvider;
@@ -19,9 +20,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(MessageBag::class, function () {
             return new MessageBag();
         });
-
-        $this->app->singleton(StripeClient::class, function() {
+        $this->app->singleton(StripeClient::class, function () {
             return new StripeClient(config('services.stripe.key'));
+        });
+        $this->app->singleton(PaymentService::class, function () {
+            return new StripePaymentService(resolve(StripeClient::class));
         });
     }
 

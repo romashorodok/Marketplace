@@ -16,7 +16,7 @@ export const ruleSignatures = {
     },
 
     required: function (value) {
-        return value === null || value === '';
+        return !(value === null || value === '' || value === undefined);
     },
 
     same: function (value, {...args} = null) {
@@ -80,7 +80,7 @@ class Schema {
     }
 }
 
-export const schemaField = () => new Schema();
+export const schemaField = (value) => new Schema(value);
 
 export const defaultErrorMessage = {
     regex: 'Not match regex',

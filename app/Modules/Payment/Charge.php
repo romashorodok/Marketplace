@@ -6,15 +6,15 @@ namespace App\Modules\Payment;
 
 class Charge
 {
-    public function __construct(public array $data) {}
+    public function __construct(private array $data) {}
 
-    public function getPaymentId(): int
+    public function getPaymentId(): string
     {
         return $this->data['id'];
     }
 
-    public function getAmount(): float
+    public function __toString(): string
     {
-        return $this->data['amount'];
+        return $this->data['id'];
     }
 }

@@ -22,7 +22,7 @@ class BillingItem extends Model
     /**
      * @var string[]
      */
-    protected $fillable = ['cart_id', 'product_id', 'price'];
+    protected $fillable = ['cart_id', 'product_id', 'price', 'order_id'];
 
     /**
      * @var string[]
