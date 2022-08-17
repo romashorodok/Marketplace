@@ -15,7 +15,7 @@
             </section>
             <section class="item-section">
                 <div class="item-section--price">
-                    <span class="">{{ item.price }} ₴</span>
+                    <span class="">{{ item.quantity_price }} ₴</span>
                     <span class="price-qty">Qty: {{ item.quantity }} </span>
                     <div class="qty-actions">
                         <span class="app-btn-link" @click="decreaseQuantity(item)">-</span>

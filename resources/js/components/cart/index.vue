@@ -31,7 +31,7 @@ import AppCartItem from './cart-item';
 const {fetchCart, cart, deleteCartItems} = useCart();
 
 const cartItems = computed(() => {
-    const items = cart.value?.cart_items ?? [];
+    const items = cart.value?.billing_items ?? [];
     const empty = items.length === 0;
 
     return empty ? null : items;

@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class CartItem extends Model
+class BillingItem extends Model
 {
     use HasFactory;
 
@@ -22,12 +22,12 @@ class CartItem extends Model
     /**
      * @var string[]
      */
-    protected $fillable = ['cart_id', 'product_id'];
+    protected $fillable = ['cart_id', 'product_id', 'price'];
 
     /**
      * @var string[]
      */
-    protected $appends = ['price'];
+    protected $appends = ['quantity_price'];
 
     /**
      * @var string[]
@@ -61,7 +61,7 @@ class CartItem extends Model
     /**
      * @return Attribute
      */
-    public function price(): Attribute
+    public function quantityPrice(): Attribute
     {
         $calcPrice = fn($quantity, $price) => $quantity === 0
             ? $price
@@ -70,22 +70,8 @@ class CartItem extends Model
         return Attribute::make(
             get: fn () => $calcPrice(
                 $this->quantity,
-                $this->product->price
+                $this->price
             )
         );
-    }
-
-    /**
-     * @throws ProductException
-     * @throws CartItemException
-     */
-    public function scopeCreateWithProduct(Builder $query, array $fields, int $productId): Model
-    {
-        if ($query->where('product_id', $productId)->exists())
-            throw new CartItemException('Cart item already exist');
-
-        $fields = array_merge(["product_id" => $productId], $fields);
-
-        return $query->create($fields);
     }
 }

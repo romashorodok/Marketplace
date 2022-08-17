@@ -13,21 +13,22 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('cart_items', function (Blueprint $table) {
+        Schema::create('billing_items', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('cart_id');
-            $table->unsignedBigInteger('product_id');
+
             $table->integer('quantity')->default(1);
+            $table->decimal('price', 10,2);
 
-            $table->foreign('cart_id')
-                ->references('id')
-                ->on('images')
-                ->cascadeOnDelete();
+            $table->foreignId('cart_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
 
-            $table->foreign('product_id')
-                ->references('id')
-                ->on('products')
-                ->cascadeOnUpdate();
+            $table->foreignId('product_id')
+                ->nullable()
+                ->constrained()
+                ->cascadeOnUpdate()
+                ->nullOnDelete();
         });
     }
 

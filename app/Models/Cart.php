@@ -25,7 +25,7 @@ class Cart extends Model
     /**
      * @var string[]
      */
-    protected $with = ['cartItems'];
+    protected $with = ['billingItems'];
 
     /**
      * @var string[]
@@ -48,9 +48,9 @@ class Cart extends Model
     /**
      * @return HasMany
      */
-    public function cartItems(): HasMany
+    public function billingItems(): HasMany
     {
-        return $this->hasMany(CartItem::class);
+        return $this->hasMany(BillingItem::class);
     }
 
     /**
@@ -58,7 +58,7 @@ class Cart extends Model
      */
     public function totalPrice(): Attribute
     {
-        $getAllPrices = fn (): array => array_map(fn($item) => $item['price'], $this->cartItems->toArray());
+        $getAllPrices = fn (): array => array_map(fn($item) => $item['quantity_price'], $this->billingItems->toArray());
 
         return Attribute::make(
             get: fn() => number_format(array_sum($getAllPrices()), 2, '.', '')
@@ -71,7 +71,7 @@ class Cart extends Model
     public function count(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->cartItems->count()
+            get: fn() => $this->billingItems->count()
         );
     }
 }

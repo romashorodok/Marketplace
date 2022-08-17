@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Exceptions\CartItemException;
-use App\Exceptions\ProductException;
 use App\Models\Cart;
-use App\Models\CartItem;
+use App\Models\BillingItem;
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\MessageBag;
 
@@ -20,7 +20,7 @@ class CartService
      */
     public function __construct(
         private AuthenticateService $authenticate,
-        private MessageBag $messageBag
+        private MessageBag          $messageBag
     ) { }
 
     /**
@@ -41,11 +41,21 @@ class CartService
     public function createItem(array $fields): Cart|Model
     {
         $cart = $this->getCart();
-
-        $fields = array_merge(['cart_id' => $cart->id], $fields);
+        $productId = $fields['productId'];
 
         try {
-            CartItem::createWithProduct($fields, $fields['productId']);
+            if ($this->existItem($cart, $productId))
+                throw new CartItemException('Cart item already exist');
+
+            $product = Product::find($productId, 'price');
+
+            $fields = array_merge([
+                'cart_id' => $cart->id,
+                'product_id' => $productId,
+                'price' => $product->price
+            ], $fields);
+
+            BillingItem::create($fields);
 
             return $cart;
         } catch (CartItemException $e) {
@@ -62,7 +72,7 @@ class CartService
      */
     public function updateItem(int $cartItemId, array $fields): Cart|Model
     {
-        $cartItems = $this->getCart()->cartItems();
+        $cartItems = $this->getCart()->billingItems();
 
         $cartItems->where('id', $cartItemId)->update($fields);
 
@@ -75,7 +85,7 @@ class CartService
      */
     public function deleteItem(int $cartItemId): Cart|Model
     {
-        $cartItems = $this->getCart()->cartItems();
+        $cartItems = $this->getCart()->billingItems();
 
         $cartItems->where('id', $cartItemId)->delete();
 
@@ -87,8 +97,13 @@ class CartService
      */
     public function deleteItems(): Cart|Model
     {
-        $this->getCart()->cartItems()->delete();
+        $this->getCart()->billingItems()->delete();
 
         return $this->getCart();
+    }
+
+    private function existItem(Cart $cart, int $productId): bool
+    {
+        return $cart->billingItems()->where('product_id', $productId)->exists();
     }
 }
