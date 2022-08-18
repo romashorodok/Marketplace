@@ -2,6 +2,7 @@ import {useHttp} from "@/composables/useHttp";
 import {ref} from "vue";
 
 const account = ref(null);
+const orders = ref(null);
 
 const mapAccount = (value) => {
     account.value = value;

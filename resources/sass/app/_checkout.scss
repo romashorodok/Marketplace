@@ -2,8 +2,9 @@
 .checkout {
     &-wrapper {
         display: flex;
-        justify-content: center;
-        width: 100%;
+        margin: auto;
+        height: 80vh;
+        place-items: center;
     }
 
     &-field {
@@ -25,6 +26,11 @@
         border-radius: 5px;
         opacity: .9;
     }
+}
+
+.buy-button {
+    width: 100%;
+    margin-top: 25px;
 }
 
 .stripe-wrapper--focus {

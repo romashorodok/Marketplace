@@ -13,9 +13,9 @@ export const useHttp = () => {
         }
     });
 
-    const get = async (url) => {
+    const get = async (url, query = null) => {
         try {
-            const resp = await axios.get(url, config());
+            const resp = await axios.get(url, {...config(), params: query});
 
             result.value = await resp.data;
 

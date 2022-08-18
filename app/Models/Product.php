@@ -16,7 +16,7 @@ class Product extends Model
 
     protected $with = ['image', 'category'];
 
-    protected $hidden = ['category_id', 'image_id'];
+    protected $hidden = ['category_id', 'image_id', 'created_at', 'updated_at', 'count'];
 
     protected $casts = [
         'price' => 'double'

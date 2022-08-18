@@ -34,13 +34,14 @@ class BillingItem extends Model
      */
     protected $hidden = [
         'cart_id',
-        'product_id'
+        'product_id',
+        'order_id',
     ];
 
     /**
      * @var string[]
      */
-    protected $with = ['product', 'product.image'];
+    protected $with = ['product'];
 
     /**
      * @return BelongsTo

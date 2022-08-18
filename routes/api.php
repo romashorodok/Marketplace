@@ -37,6 +37,8 @@ Route::group(['middleware' => ['auth', 'auth:api']], function () {
 Route::group(['middleware' => ['auth:api', 'client.credentials']], function () {
     Route::get('account', [AccountController::class, 'getAccount']);
     Route::post('account', [AccountController::class, 'updateAccount']);
+
+    Route::get('account/orders', [AccountController::class, 'getOrders']);
 });
 
 Route::group(['middleware' => ['auth:api', 'client.credentials']], function () {

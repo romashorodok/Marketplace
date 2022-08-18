@@ -28,7 +28,9 @@
                     </p>
                 </template>
             </div>
-            <app-button>Submit</app-button>
+            <app-button class="buy-button">
+                Pay {{ cart.total_price }}
+            </app-button>
         </form>
     </div>
 </template>
@@ -43,6 +45,7 @@ import {defSchema, useForm} from "@/composables/useForm";
 import {schemaField} from "@models/schema";
 import {useAccount} from "@/composables/useAccount";
 import {useHttp} from "@/composables/useHttp";
+import {useCart} from "@/composables/useCart";
 
 const cardRef = ref();
 const cardWrapper = ref();
@@ -52,6 +55,7 @@ const stripeElements = stripe.elements();
 const stripeCard = stripeElements.create('card', {hidePostalCode: true});
 
 const {account, fetchAccount} = useAccount();
+const {fetchCart, cart} = useCart();
 const http = useHttp();
 
 await fetchAccount();
@@ -74,6 +78,7 @@ const {validate, hasError, setServerErrors, resetServerErrors} = useForm(schema,
 
 watch(schema, () => validate());
 
+onMounted(() => fetchCart());
 onMounted(() => stripeCard.mount(cardRef.value));
 onMounted(() => {
     stripeCard.on('focus', () => {
