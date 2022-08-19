@@ -1,6 +1,6 @@
 <template>
-    <button ref="buttonRef" class="app-btn" @click="animate">
-        <slot />
+    <button ref="buttonRef" :disabled="disabled" class="app-btn" @click="animate">
+        <slot/>
         <transition-group @after-enter="animateEnd">
             <span class="ripple"
                   v-for="(item, index) in ripples"
@@ -16,7 +16,8 @@
 import {defineProps, ref} from "vue";
 
 const props = defineProps({
-    type: { type: String, default: 'submit' }
+    type: {type: String, default: 'submit'},
+    disabled: {type: Boolean, default: false}
 });
 
 const buttonRef = ref();

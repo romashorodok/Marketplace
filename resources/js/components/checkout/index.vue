@@ -28,7 +28,8 @@
                     </p>
                 </template>
             </div>
-            <app-button class="buy-button">
+
+            <app-button v-if="active" ref="submitButton" class="buy-button">
                 Pay {{ cart.total_price }}
             </app-button>
         </form>
@@ -46,9 +47,12 @@ import {schemaField} from "@models/schema";
 import {useAccount} from "@/composables/useAccount";
 import {useHttp} from "@/composables/useHttp";
 import {useCart} from "@/composables/useCart";
+import {useRouter} from "vue-router";
 
 const cardRef = ref();
 const cardWrapper = ref();
+const active = ref(true);
+const submitButton = ref(null);
 
 const stripe = await loadStripe(STRIPE);
 const stripeElements = stripe.elements();
@@ -56,6 +60,7 @@ const stripeCard = stripeElements.create('card', {hidePostalCode: true});
 
 const {account, fetchAccount} = useAccount();
 const {fetchCart, cart} = useCart();
+const router = useRouter();
 const http = useHttp();
 
 await fetchAccount();
@@ -91,34 +96,42 @@ onMounted(() => {
 
 const submitPayment = async () => {
     validate();
+    await (async () => active.value = false)();
+    const hidden = submitButton.value === null;
 
-    if (!hasError()) {
+    if (!hasError() && hidden) {
         const {token} = await stripe.createToken(stripeCard);
 
         if (!token) {
             setServerErrors({card: ['Enter valid card']})
+            active.value = true;
+            return;
         } else {
             resetServerErrors();
         }
 
-        const {charge_token: invoice} = await http.post('/api/checkout', {
+        const result = await http.post('/api/checkout', {
             firstName: schema.firstName.value,
             lastName: schema.lastName.value,
             address: schema.address.value,
             paymentToken: token.id
         });
 
-        if (invoice)
-            toInvoice(invoice);
+        if (result?.charge_token) {
+            await fetchCart();
+            toInvoice(result.charge_token);
+            return;
+        }
 
         const errors = http.errors.value?.response.data?.errors;
 
-        if (errors)
-            setServerErrors(errors);
+        setServerErrors(errors);
     }
+
+    active.value = true;
 };
 
 const toInvoice = (invoice) => {
-    console.log('Success:', invoice);
+    router.replace({name: 'orders'});
 };
 </script>
