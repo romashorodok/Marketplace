@@ -82,6 +82,7 @@ const messages = {
 const {validate, hasError, setServerErrors, resetServerErrors} = useForm(schema, messages);
 
 watch(schema, () => validate());
+watch(http.errors, () => active.value = true);
 
 onMounted(() => fetchCart());
 onMounted(() => stripeCard.mount(cardRef.value));
