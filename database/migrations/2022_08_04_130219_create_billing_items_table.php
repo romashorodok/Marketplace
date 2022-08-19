@@ -21,12 +21,12 @@ return new class extends Migration
 
             $table->foreignId('cart_id')
                 ->nullable()
-                ->constrained()
+                ->constrained('carts')
                 ->nullOnDelete();
 
             $table->foreignId('product_id')
                 ->nullable()
-                ->constrained()
+                ->constrained('products')
                 ->cascadeOnUpdate()
                 ->nullOnDelete();
         });

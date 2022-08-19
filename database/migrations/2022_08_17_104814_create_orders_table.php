@@ -29,7 +29,8 @@ return new class extends Migration {
         Schema::table('billing_items', function (Blueprint $table) {
             $table->foreignId('order_id')
                 ->nullable()
-                ->constrained('billing_items');
+                ->constrained('orders')
+                ->cascadeOnUpdate();
         });
     }
 
