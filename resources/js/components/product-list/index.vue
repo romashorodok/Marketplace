@@ -4,19 +4,13 @@
             <app-product :product="product"/>
         </li>
     </ul>
-    <div class="pagination-wrapper">
-        <a v-for="page in pages"
-           class="app-btn"
-           :class="[page.number === currentPage ? 'app-btn-active' : '']"
-           @click="changePage(page.number)">
-            {{ page.number }}
-        </a>
-    </div>
+    <app-pagination :current-page="currentPage" :pages="pages" @onChange="changePage"/>
 </template>
 
 <script>
 import {useStore, mapGetters} from "vuex";
 import AppProduct from "./product";
+import AppPagination from '@/shared/pagination';
 
 export default {
     setup: async () => {
@@ -29,14 +23,13 @@ export default {
 
     methods: {
         changePage(page) {
-            if (page !== this.currentPage)
-                this.store.dispatch('changePage', page)
-                    .then(() => window.scrollTo({
-                        top: 0,
-                        left: 0,
-                        behavior: 'smooth'
-                    }))
-                    .catch(console.error);
+            this.store.dispatch('changePage', page)
+                .then(() => window.scrollTo({
+                    top: 0,
+                    left: 0,
+                    behavior: 'smooth'
+                }))
+                .catch(console.error);
         }
     },
 
@@ -48,6 +41,6 @@ export default {
         }),
     },
 
-    components: {AppProduct}
+    components: {AppProduct, AppPagination}
 }
 </script>

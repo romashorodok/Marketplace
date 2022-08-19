@@ -31,6 +31,7 @@ class OrderService
     {
         $orders = $this->authenticate->getUser()->orders()->getQuery();
         $orders = $this->repository->getByPage($orders, $page, $size);
+        $orders = $this->repository->getByLatest($orders);
 
         return $orders->get()->toArray();
     }

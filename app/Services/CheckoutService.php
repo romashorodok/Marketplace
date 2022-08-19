@@ -65,8 +65,8 @@ class CheckoutService
 
             $this->messageBag->add('card', $e->getMessage());
 
-            $order->delete();
             $this->db->rollBack();
+            $order->delete();
 
             throw $e;
         }

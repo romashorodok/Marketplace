@@ -4,8 +4,11 @@ import {computed, ref, watch} from "vue";
 const orders = ref([]);
 const errors = ref([]);
 const pages = ref([]);
+/**
+ * Queries
+ */
 const page = ref(1);
-const size = ref(10);
+const size = ref(2);
 
 const mapOrders = (value) => {
     const {data, pages: links, currentPage} = value;
@@ -25,6 +28,8 @@ export const useOrders = () => {
         size: size.value
     }));
 
+    watch(query, () => fetchOrders());
+
     const fetchOrders = async () => {
         if (http.isAuthorized()) {
             try {
@@ -37,9 +42,15 @@ export const useOrders = () => {
         }
     };
 
+    const setOrderPage = (number) => {
+        page.value = number;
+    };
+
     return {
         fetchOrders,
+        setOrderPage,
         orders,
-        pages
+        pages,
+        page
     };
 }
