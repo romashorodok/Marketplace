@@ -96,7 +96,7 @@ export default {
 
                 await context.commit('authorize', token);
             } catch (e) {
-                // context.commit('unauthorize');
+                context.commit('unauthorize');
                 console.error(e);
             }
         }

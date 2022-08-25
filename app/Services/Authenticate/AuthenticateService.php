@@ -91,7 +91,7 @@ class AuthenticateService
         $request->session()->flush();
     }
 
-    public function deleteCookieToken(): void
+    private function deleteCookieToken(): void
     {
         $this->cookie->queue(
             $this->cookie->make('token', null, secure: true, httpOnly: true, sameSite: 'strict'),
@@ -102,7 +102,7 @@ class AuthenticateService
         );
     }
 
-    public function addCookieToken(AuthenticateMethod $method, Token $token): void
+    private function addCookieToken(AuthenticateMethod $method, Token $token): void
     {
         $this->cookie->queue(
             $this->cookie->make('token', $token->getAccessToken(), 60, secure: true, httpOnly: true, sameSite: 'strict'),
