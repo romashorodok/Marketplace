@@ -33,11 +33,12 @@ export default {
     },
     actions: {
         async login(context, credential) {
-            const response = await axios.post('/api/login', credential);
+            const {token} = await axios.post('/api/login', credential).then(resp => resp.data);
 
-            if (response.data.token) {
-                await context.commit('authorize', response.data.token);
+            if (token) {
+                await context.commit('authorize', token);
                 context.commit('changeModal', 'closed');
+                localStorage.setItem('token', token);
             }
 
             await useCart().fetchCart();
@@ -87,16 +88,17 @@ export default {
         },
 
         async restoreToken(context) {
-            const token = localStorage.getItem(tokenKey);
+            try {
+                const {token} = await axios.get('/api/token',
+                    config(
+                        localStorage.getItem('token')
+                    )).then(res => res.data);
 
-            if (token)
-                try {
-                    await axios.get('/api/token', config(token));
-
-                    context.commit('authorize', token);
-                } catch (e) {
-                    await context.dispatch('logout');
-                }
+                await context.commit('authorize', token);
+            } catch (e) {
+                // context.commit('unauthorize');
+                console.error(e);
+            }
         }
     },
     getters: {

@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Exceptions\CartItemException;
-use App\Models\Cart;
 use App\Models\BillingItem;
+use App\Models\Cart;
 use App\Models\Product;
+use App\Services\Authenticate\AuthenticateService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\MessageBag;
 

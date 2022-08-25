@@ -22,7 +22,8 @@ class User extends Authenticatable
         'email',
         'password',
         'firstName',
-        'lastName'
+        'lastName',
+        'image_id'
     ];
 
     /**
@@ -48,6 +49,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    protected $with = ['image'];
+
     /**
      * @return HasOne
      */
@@ -59,5 +62,15 @@ class User extends Authenticatable
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function socialAccounts(): HasMany
+    {
+        return $this->hasMany(SocialAccount::class);
+    }
+
+    public function image(): HasOne
+    {
+        return $this->hasOne(Image::class, 'id', 'image_id');
     }
 }

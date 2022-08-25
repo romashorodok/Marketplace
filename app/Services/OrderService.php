@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Models\Order;
 use App\Modules\Payment\Billing;
 use App\Repository\OrderRepository;
+use App\Services\Authenticate\AuthenticateService;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class OrderService

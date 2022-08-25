@@ -2,115 +2,96 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\AuthenticateException;
+use App\Http\Requests\MorphRequest;
 use App\Http\Requests\CredentialRequest;
 use App\Http\Requests\RegisterCredentialRequest;
-use App\Models\User;
-use App\Services\AuthenticateService;
+use App\Services\Authenticate\AuthenticateService;
+use App\Services\Authenticate\Contracts\AuthenticateMethod;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-
+use Laravel\Socialite\SocialiteManager;
 
 class AuthController extends Controller
 {
 
     public function __construct(
-        private AuthenticateService $authenticate,
+        private readonly AuthenticateService $authenticate,
+        private readonly SocialiteManager    $socialite
     )
     {
-        $this->middleware('client.credentials')
-            ->only(['token']);
     }
 
-    public function login(CredentialRequest $request): Response
+    public function login(MorphRequest $request): Response|RedirectResponse
     {
-        $request->validated();
+        $credentials = [];
 
-        $credential = $request->safe(['email', 'password']);
+        $authMethod = AuthenticateMethod::tryFrom(
+            $request->query->get('method', 'server')
+        );
 
-        $result = $this->authenticate->tryAuthenticate($credential);
+        if (AuthenticateMethod::Server === $authMethod) {
+            $credentialsReq = $request->transformTo(CredentialRequest::class);
 
-        if ($result)
+            $credentials = $credentialsReq->validated();
+        }
+
+        try {
+            $token = $this->authenticate->tryAuthenticate($authMethod, $credentials);
+
             $request->session()->regenerate();
 
-        return $result
-            ? response([
-                "status" => "OK",
-                "token"  => $this->authenticate->getAccessToken()
-            ], 200)
-            : response(["status" => "BAD"], 401);
-    }
+            if (AuthenticateMethod::Server !== $authMethod)
+                return redirect('/');
 
-    public function logout(Request $request, User|Authenticatable $user = null): Response
-    {
-        $this->authenticate->logout();
-        $request->session()->flush();
-
-        $user?->token()->revoke();
-
-        return response([
-            "status" => "OK",
-        ], 202);
+            return response(['token' => $token->getAccessToken()], 200);
+        } catch (AuthenticateException $e) {
+            return response(['errors' => $e->getMessage()], 401);
+        }
     }
 
     public function register(RegisterCredentialRequest $request): Response
     {
         $credentials = $request->validated();
-        $password = $credentials['password'];
-        $credentials['password'] = Hash::make($credentials['password']);
 
         try {
-            User::create($credentials);
+            $token = $this->authenticate->register($credentials);
 
-            $authenticated =  $this->authenticate->tryAuthenticate([
-                "email" => $credentials['email'],
-                "password" => $password
-            ]);
+            $request->session()->regenerate();
 
-            if ($authenticated)
-                return response([
-                    "status" => "OK",
-                    "token" => $this->authenticate->getAccessToken()
-                ], 201);
-            else
-                return response([
-                    "status" => "CREATED"
-                ], 201);
-        } catch (\Exception $e) {
-            return response([
-                "status" => "BAD",
-                "message" => $e->getMessage()
-            ], 500);
+            return response(['token' => $token->getAccessToken()], 200);
+        } catch (AuthenticateException $e) {
+            return response(['errors' => $e->getMessage()], 422);
+        }
+    }
+
+    public function logout(Request $request): Response
+    {
+        try {
+            $this->authenticate->logout($request);
+
+            return response(["status" => "OK"], 202);
+        } catch (AuthenticateException $e) {
+            return response(['errors' => $e], 403);
         }
     }
 
     public function token(Request $request): Response
     {
+        try {
+            $token = $this->authenticate->getToken($request);
 
-        /* @var User $tokenUser */
-        $tokenUser = Auth::guard('api')->user();
+            if (!$token->validate()) throw new AuthenticateException('Invalid token');
 
-        if ($tokenUser->token()->user_id === $request->user()->id)
-        {
-            return response([
-                "status" => "OK"
-            ], 200);
-        } else
-        {
-            $this->logout($request, $tokenUser);
-
-            return response([
-                "status" => "BAD"
-            ], 403);
+            return response(['token' => $token->getAccessToken()]);
+        } catch (AuthenticateException $e) {
+            return response(['errors' => $e->getMessage()], 403);
         }
     }
 
-    public function getUser(Request $request): Response
+    public function redirectToGoogle(): RedirectResponse
     {
-        return response([
-            'user' => $this->authenticate->getUser()
-        ], 200);
+        return $this->socialite->driver('google')->redirect();
     }
 }

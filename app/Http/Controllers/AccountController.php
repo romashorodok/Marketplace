@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\CredentialsUpdateException;
 use App\Http\Requests\UpdateCredentialRequest;
 use App\Services\AccountService;
-use App\Services\AuthenticateService;
+use App\Services\Authenticate\AuthenticateService;
 use App\Services\OrderService;
 use App\Services\PaginateService;
 use Exception;

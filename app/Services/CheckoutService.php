@@ -7,7 +7,7 @@ namespace App\Services;
 use App\Exceptions\PaymentException;
 use App\Models\Order;
 use App\Modules\Payment\Billing;
-use App\Services\Interfaces\PaymentService;
+use App\Services\Contracts\PaymentService;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Log\LogManager;
 use Illuminate\Support\MessageBag;

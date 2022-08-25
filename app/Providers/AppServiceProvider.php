@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Services\Interfaces\PaymentService;
+use App\Services\Contracts\PaymentService;
 use App\Services\StripePaymentService;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\ServiceProvider;

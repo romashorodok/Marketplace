@@ -22,7 +22,7 @@
             </section>
             <section class="modal-login-oauth">
                 <span class="oauth-divider">or</span>
-                <button class="google-confirm app-btn">
+                <button class="google-confirm app-btn" @click="loginByGoogle">
                     Google
                 </button>
             </section>
@@ -76,4 +76,6 @@ const checkForm = () => {
             });
     }
 };
+
+const loginByGoogle = () => window.location = '/api/login/google';
 </script>

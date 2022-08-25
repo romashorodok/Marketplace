@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Exceptions\CredentialsUpdateException;
+use App\Services\Authenticate\AuthenticateService;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\MessageBag;
 

@@ -6,7 +6,7 @@ namespace App\Services;
 
 use App\Exceptions\PaymentException;
 use App\Modules\Payment\Charge;
-use App\Services\Interfaces\PaymentService;
+use App\Services\Contracts\PaymentService;
 use Stripe\Exception\ApiErrorException;
 use Stripe\StripeClient;
 
