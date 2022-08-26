@@ -58,6 +58,14 @@
             border: 1px solid $fg-2;
         }
 
+
+        .profile-avatar {
+            min-width: 100px;
+            min-height: 200px;
+            object-fit: scale-down;
+            display: block;
+        }
+
         .profile-avatar-span {
             min-width: 100px;
             min-height: 200px;

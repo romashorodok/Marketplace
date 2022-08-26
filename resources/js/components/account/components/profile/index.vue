@@ -4,7 +4,12 @@
             <h4 class="profile-label">Avatar</h4>
             <ul class="list-group">
                 <li class="list-item">
-                    <span class="profile-avatar-span"/>
+                    <img v-if="image?.path"
+                         :src="image.path"
+                         referrerpolicy="no-referrer"
+                         alt="image"
+                    class="profile-avatar"/>
+                    <span v-else class="profile-avatar-span"/>
                 </li>
             </ul>
         </section>
@@ -96,12 +101,13 @@ export default {
         passwordNew: null,
         passwordNewConfirm: null,
         email: null,
+        image: null,
 
         messages: { },
     }),
 
     mounted() {
-        Object.assign(this, {...this.store.getters.getUser})
+        Object.assign(this, {...this.store.getters.getUser});
     },
 
     methods: {
