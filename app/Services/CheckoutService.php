@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Exceptions\PaymentException;
+use App\Jobs\SendEmail;
+use App\Mail\OrderSuccessEmail;
 use App\Models\Order;
 use App\Modules\Payment\Billing;
 use App\Services\Contracts\PaymentService;
@@ -50,7 +52,10 @@ class CheckoutService
 
             $this->cart->purge();
 
-            $this->db->commit();;
+            $this->db->commit();
+
+            SendEmail::dispatch($order->client, new OrderSuccessEmail($order));
+
             return $order;
         } catch (PaymentException|Exception $e) {
 

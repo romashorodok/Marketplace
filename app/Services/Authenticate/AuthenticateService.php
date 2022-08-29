@@ -4,6 +4,8 @@ namespace App\Services\Authenticate;
 
 use App\Exceptions\AuthenticateException;
 use App\Exceptions\EnumException;
+use App\Jobs\SendEmail;
+use App\Mail\RegistrationEmail;
 use App\Models\User;
 use App\Services\Authenticate\Contracts\Authenticate;
 use App\Services\Authenticate\Contracts\AuthenticateMethod;
@@ -50,8 +52,10 @@ class AuthenticateService
         $authMethod = AuthenticateMethod::Server;
 
         $auth = $this->getAuthMethod($authMethod);
-        $auth->register($credentials);
+        $user = $auth->register($credentials);
         $auth->login($credentials);
+
+        SendEmail::dispatch($user, new RegistrationEmail($user));
 
         $token = $this->generateToken($authMethod);
 

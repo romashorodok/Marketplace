@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Services\Authenticate\Methods;
 
 use App\Exceptions\AuthenticateException;
+use App\Jobs\SendEmail;
+use App\Mail\RegistrationEmail;
 use App\Models\Image;
 use App\Models\SocialAccount;
 use App\Models\User;
@@ -95,6 +97,8 @@ class GoogleAuthenticate implements Authenticate
                 ]);
 
             $this->db->commit();
+
+            SendEmail::dispatch($user, new RegistrationEmail($user));
 
             return $user;
         } catch (Exception|Throwable $e) {
