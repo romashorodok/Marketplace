@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Repository;
+namespace App\Repository\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
 
-abstract class Repository
+trait Pageable
 {
     public function getByPage(Builder $query, int $page, int $size): Builder
     {
