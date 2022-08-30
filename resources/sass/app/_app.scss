@@ -41,3 +41,19 @@
     color: red;
     white-space: pre-line;
 }
+
+.empty-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    min-height: 60vh;
+    color: $fg-3;
+
+    img {
+        width: 80px;
+        height: 100px;
+        filter: $fg-3_filter;
+    }
+}
