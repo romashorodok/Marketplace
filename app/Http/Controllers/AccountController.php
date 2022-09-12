@@ -8,6 +8,7 @@ use App\Services\AccountService;
 use App\Services\Authenticate\AuthenticateService;
 use App\Services\OrderService;
 use App\Services\PaginateService;
+use App\Services\ProductService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -16,11 +17,12 @@ use Illuminate\Support\MessageBag;
 class AccountController extends Controller
 {
     public function __construct(
-        private AuthenticateService $authenticate,
-        private AccountService      $account,
-        private OrderService        $order,
-        private PaginateService     $paginate,
-        private MessageBag          $messageBag
+        private readonly AuthenticateService $authenticate,
+        private readonly AccountService      $account,
+        private readonly OrderService        $order,
+        private readonly ProductService      $product,
+        private readonly PaginateService     $paginate,
+        private readonly MessageBag          $messageBag
     )
     {
     }
@@ -75,5 +77,38 @@ class AccountController extends Controller
         } catch (Exception $e) {
             return response(['errors' => $e->getMessage()], 500);
         }
+    }
+
+    public function getProducts(Request $request): Response
+    {
+        $page = $request->query('page', 1);
+        $size = $request->query('size', 50);
+
+        try {
+            $products = $this->paginate->getPagination(
+                $this->product->getUserProducts($page, $size),
+                $page,
+                $size,
+                $this->product->getUserProductsCount()
+            );
+
+            return response(['products' => $products], 200);
+        } catch (Exception $e) {
+            return response(['errors' => $e->getMessage()], 500);
+        }
+    }
+
+    public function createProduct(Request $request): Response
+    {
+        $product = $this->product->createUserProduct($request->all());
+
+        return response(['product' => $product], 200);
+    }
+
+    public function updateProduct(Request $request): Response
+    {
+        $this->product->updateUserProduct($request->all());
+
+        return response(['product' => ''], 201);
     }
 }

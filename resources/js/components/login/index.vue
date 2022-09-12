@@ -50,7 +50,7 @@ import {useStore} from "vuex";
 
 const schema = defSchema({
     email: schemaField().email(),
-    password: schemaField().required()
+    password: schemaField().must()
 });
 
 const messages = {

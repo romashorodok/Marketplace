@@ -11,7 +11,7 @@ class Category extends Model
 
     protected $fillable = ['name'];
 
-    protected $hidden = ['count'];
+    protected $hidden = ['count', 'created_at', 'updated_at'];
 
     public function product()
     {

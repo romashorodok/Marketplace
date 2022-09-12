@@ -100,3 +100,22 @@
 
     }
 }
+
+.product-section {
+    min-width: 100vw;
+
+    .product-section-active {
+        display: flex;
+        justify-content: flex-end;
+        margin: 5px 0;
+        padding: 5px;
+    }
+}
+
+.add-img {
+    filter: $bg-1_filter;
+}
+
+.app-btn:hover .add-img {
+    filter: $fg-1-filter;
+}

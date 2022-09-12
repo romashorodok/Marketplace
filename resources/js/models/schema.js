@@ -15,7 +15,7 @@ export const ruleSignatures = {
         return pattern.test(value);
     },
 
-    required: function (value) {
+    must: function (value) {
         return !(value === null || value === '' || value === undefined);
     },
 
@@ -23,6 +23,19 @@ export const ruleSignatures = {
         const {deferValue} = args;
 
         return value === deferValue();
+    },
+
+    price: function (value, {...args}) {
+        const {min, max} = args;
+
+        if (Math.sign(value) <= 0) return false;
+
+        const formatter = new Intl.NumberFormat(undefined, {minimumFractionDigits: 2});
+        const pattern = /[,-]/g;
+
+        const number = formatter.format(value.toString().replace(pattern, '.'));
+
+        return number >= min && number <= max;
     }
 };
 
@@ -57,7 +70,7 @@ class Schema {
     }
 
     email(pattern = emailPattern) {
-        return this.regex(emailPattern);
+        return this.regex(pattern);
     }
 
     name(pattern = namePattern) {
@@ -71,12 +84,16 @@ class Schema {
         return this.#mapRule('regex', {pattern});
     }
 
-    required() {
-        return this.#mapRule('required')
+    must() {
+        return this.#mapRule('must')
     }
 
     same(deferValue) {
         return this.#mapRule('same', {deferValue})
+    }
+
+    price(min, max) {
+        return this.#mapRule('price', {min, max});
     }
 }
 
@@ -84,6 +101,7 @@ export const schemaField = (value) => new Schema(value);
 
 export const defaultErrorMessage = {
     regex: 'Not match regex',
-    required: 'Required field',
-    same: 'Must be same'
+    must: 'Required field',
+    same: 'Must be same',
+    price: 'Price is incorrect'
 };

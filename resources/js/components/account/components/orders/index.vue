@@ -5,7 +5,7 @@
                 <app-order v-for="order in orders" :order="order"/>
             </ul>
             <div v-else class="empty-section">
-                <img src="/icons/orders-outline.svg" width="40" alt="test"/>
+                <img src="/icons/orders-outline.svg" width="40" alt=""/>
                 <p>You don't have any orders</p>
             </div>
         </div>

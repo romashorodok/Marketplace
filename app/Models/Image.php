@@ -30,7 +30,7 @@ class Image extends Model
     public function path(): Attribute
     {
         return Attribute::make(
-            get: fn ($value, $attributes) => asset($value)
+            get: fn($value, $attributes) => asset($value)
         );
     }
 }

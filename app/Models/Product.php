@@ -12,7 +12,7 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'price', 'count'];
+    protected $fillable = ['name', 'price', 'count', 'vendor_id', 'image_id', 'category_id', 'description'];
 
     protected $with = ['image', 'category'];
 
@@ -22,6 +22,11 @@ class Product extends Model
         'price' => 'double'
     ];
 
+    public function vendor(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
@@ -29,6 +34,6 @@ class Product extends Model
 
     public function image(): HasOne
     {
-        return $this->hasOne(Image::class, 'id');
+        return $this->hasOne(Image::class, 'id', 'image_id');
     }
 }

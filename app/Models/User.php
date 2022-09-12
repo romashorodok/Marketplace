@@ -51,6 +51,11 @@ class User extends Authenticatable
 
     protected $with = ['image'];
 
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class, 'vendor_id');
+    }
+
     /**
      * @return HasOne
      */

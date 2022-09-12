@@ -1,4 +1,4 @@
-import {reactive} from "vue";
+import {reactive, toRefs} from "vue";
 import {ruleSignatures, defaultErrorMessage} from "@/models/schema";
 
 export function defSchema({...rules}) {
@@ -38,7 +38,7 @@ export function useForm(schema, errorMessages = defaultErrorMessage) {
                         delete field.errors[rule.name];
 
                 } catch (e) {
-                    rule.errors[rule.name] = e;
+                    field.errors[rule.name] = e
                 }
             }
         }

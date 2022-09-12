@@ -9,10 +9,14 @@ class CategoryController extends Controller
 {
     public function getCategories(): Response
     {
-        return response([
-            "categories" => Category::groupBy('name')
-                ->selectRaw('name, count(*) as count')
-                ->get()
-        ], 200);
+        $categories = Category::groupBy('name')
+            ->selectRaw('name, count(*) as count')
+            ->get();
+
+        $categories = collect($categories)->map(
+            fn($category) => Category::whereName($category->name)->first()
+        );
+
+        return response(["categories" => $categories], 200);
     }
 }

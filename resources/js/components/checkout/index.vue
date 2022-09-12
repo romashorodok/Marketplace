@@ -68,7 +68,7 @@ await fetchAccount();
 const schema = defSchema({
     firstName: schemaField(account.value?.firstName).name(),
     lastName: schemaField(account.value?.lastName).name(),
-    address: schemaField().required(),
+    address: schemaField().must(),
 
     card: schemaField()
 });

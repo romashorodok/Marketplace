@@ -1,0 +1,11 @@
+
+.description-text {
+    margin: 0;
+    border: 1px solid $fg-1;
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+
+.description-text:focus {
+    outline: none;
+}

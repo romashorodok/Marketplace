@@ -2,6 +2,7 @@ import Account from "./index";
 
 import Profile from './components/profile';
 import Product from './components/products';
+import Edit from './components/products/edit';
 import Order from './components/orders';
 
 const routes = [
@@ -11,7 +12,9 @@ const routes = [
         children: [
             {path: 'profile', component: Profile},
             {path: 'products', component: Product},
-            {name: 'orders', path: 'orders', component: Order}
+            {path: 'products/edit', component: Edit},
+            {name: 'editById', path: 'products/edit/:id', component: Edit, props: true},
+            {name: 'orders', path: 'orders', component: Order},
         ]
     }
 ];
