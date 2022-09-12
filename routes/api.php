@@ -44,6 +44,7 @@ Route::group(['middleware' => ['token']], function () {
     Route::get('account/product', [AccountController::class, 'getProducts']);
     Route::post('account/product', [AccountController::class, 'createProduct']);
     Route::post('account/product/{id}', [AccountController::class, 'updateProduct']);
+    Route::delete('account/product/{id}', [AccountController::class, 'deleteProduct']);
 
     Route::get('account/orders', [AccountController::class, 'getOrders']);
 });

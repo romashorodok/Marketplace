@@ -22,6 +22,8 @@ class FileUploadService
 
     public function delete(string $path): bool
     {
-        return $this->fs->disk('public')->delete($path);
+        $realPath = collect(explode('/', $path))->last();
+
+        return $this->fs->disk('public')->delete('images/' . $realPath);
     }
 }

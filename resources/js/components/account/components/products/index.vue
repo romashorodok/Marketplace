@@ -9,6 +9,9 @@
         <div>
             <ul v-if="products.length !== 0" class="product-wrapper">
                 <li class="product-card product-action" v-for="product in products.data">
+                    <span class="cart-delete-products delete-top" @click="deleteProduct(product.id)">
+                        <img src="/icons/close.svg" width="30" height="30" alt=""/>
+                    </span>
                     <app-product :product="product"/>
                     <router-link
                         class="app-btn app-btn-link app-btn--inline product-edit"
@@ -31,10 +34,17 @@
 import {onMounted} from "vue";
 import {useAccount} from "@/composables/useAccount";
 import AppProduct from "@components/product-list/product";
+import {useHttp} from "@/composables/useHttp";
 
 const {fetchProducts, products} = useAccount();
+const http = useHttp();
 
 onMounted(() => fetchProducts());
+
+const deleteProduct = async (id) => {
+    await http.del(`/api/account/product/${id}`);
+    await fetchProducts();
+};
 </script>
 
 <style lang="scss">
@@ -46,5 +56,9 @@ onMounted(() => fetchProducts());
         bottom: 0;
         right: 10px;
     }
+}
+
+.delete-top {
+    z-index: 100;
 }
 </style>

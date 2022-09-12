@@ -35,4 +35,13 @@ class ImageService
 
         return $image->refresh();
     }
+
+    public function delete(Image|null $image): bool
+    {
+        if ($image) {
+            $this->uploader->delete($image->path);
+            return $image->delete();
+        }
+        return false;
+    }
 }

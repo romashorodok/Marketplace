@@ -17,7 +17,8 @@ class ProductService
         private readonly ProductRepository   $repository,
         private readonly Product             $product,
         private readonly AuthenticateService $authenticate,
-        private readonly ImageService        $image
+        private readonly ImageService        $image,
+        private readonly FileUploadService   $uploader
     )
     {
     }
@@ -80,5 +81,18 @@ class ProductService
             $this->image->update($product->image_id, $data['image']);
 
         return $product->update($data);
+    }
+
+    public function deleteUserProduct(int $id): bool
+    {
+        return (bool)$this->authenticate->getUser()->products()->find($id)->update([
+            'vendor_id' => null
+        ]);
+
+        // What about force delete ?
+
+//        $product = $this->authenticate->getUser()->products()->find($id);
+//        $this->image->delete($product?->image);
+//        return (bool)$product->delete();
     }
 }

@@ -35,14 +35,18 @@ export const useAccount = () => {
     }
 
     const fetchProducts = async () => {
-        const {products} = await handleHttp('/api/account/product');
-        mapProduct(products);
+        try {
+            const {products} = await handleHttp('/api/account/product');
+            mapProduct(products);
+        } catch {
+            products.value = [];
+        }
     }
 
     return {
         fetchAccount,
         fetchProducts,
         account,
-        products
+        products,
     };
 };

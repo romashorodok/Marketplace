@@ -1,13 +1,15 @@
 <template>
     <li class="order-item">
-        <section class="order-item-section">
-            <img class="product-image" :src="item.product.image.path" :alt="item.product.name"/>
-        </section>
-        <section class="order-item-section order-item--info">
-            <a class="order-item--name app-btn-link">
-                {{ item.product.name }}
-            </a>
-        </section>
+        <template v-if="item?.product">
+            <section class="order-item-section">
+                <img class="product-image" :src="item.product.image.path" :alt="item.product.name"/>
+            </section>
+            <section class="order-item-section order-item--info">
+                <a class="order-item--name app-btn-link">
+                    {{ item.product.name }}
+                </a>
+            </section>
+        </template>
         <section class="order-item-section order-item--info">
             <p class="order-item-section--heading">
                 Price
@@ -33,6 +35,6 @@
 import {defineProps} from "vue";
 
 const props = defineProps({
-    item: { required: true, type: Object}
+    item: {required: true, type: Object}
 });
 </script>

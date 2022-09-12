@@ -111,4 +111,11 @@ class AccountController extends Controller
 
         return response(['product' => ''], 201);
     }
+
+    public function deleteProduct(int $id): Response
+    {
+        $this->product->deleteUserProduct($id);
+
+        return response(['product' => ''], 201);
+    }
 }
