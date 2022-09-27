@@ -1,10 +1,16 @@
 <template>
-    <ul class="product-wrapper">
-        <li class="product-card" v-for="product in products">
-            <app-product :product="product"/>
-        </li>
-    </ul>
-    <app-pagination :current-page="currentPage" :pages="pages" @onChange="changePage"/>
+    <div v-if="products">
+        <ul class="product-wrapper">
+            <li class="product-card" v-for="product in products">
+                <app-product :product="product"/>
+            </li>
+        </ul>
+        <app-pagination :current-page="currentPage" :pages="pages" @onChange="changePage"/>
+    </div>
+    <div class="empty-section product-wrapper" v-else>
+        <img src="/icons/cube.svg" width="40" alt=""/>
+        <p>Nothing found</p>
+    </div>
 </template>
 
 <script>
@@ -16,7 +22,7 @@ export default {
     setup: async () => {
         const store = useStore();
 
-        await store.dispatch('fetchProducts');
+        await store.dispatch('fetchProductsByFilters');
 
         return {store};
     },

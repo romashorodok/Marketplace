@@ -19,22 +19,20 @@ class ProductController extends Controller
 
     public function getProduct(Request $request): Response
     {
-        $requestQueries = $request->query->all();
-
-        $page = intval($requestQueries['page'] ?? 1);
-        $size = intval($requestQueries['size'] ?? 50);
-        $categories = $requestQueries['categories'] ?? [];
+        $name = $request->get('name', '');
+        $page = intval($request->get('page', 1));
+        $size = intval($request->get('size', 50));
+        $categories = $request->get('categories', []);
         $categories = !empty($categories) ? explode(',', $categories) : [];
 
-        $productsCount = $this->product->getCountByCategory($categories);
-        $products = $this->product->getProducts($page, $size, $categories);
+        $products = $this->product->getProducts($page, $size, $name, $categories);
 
         try {
             $products = $this->paginate->getPagination(
                 $products->get()->toArray(),
                 $page,
                 $size,
-                $productsCount
+                $this->product->getCount($name, $categories)
             );
 
             return response(["products" => $products], 200);

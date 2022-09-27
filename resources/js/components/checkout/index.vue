@@ -30,7 +30,7 @@
             </div>
 
             <app-button v-if="active" ref="submitButton" class="buy-button">
-                Pay {{ cart.total_price }}
+                Pay {{ cart.total_price }} ₴
             </app-button>
         </form>
     </div>
@@ -132,7 +132,7 @@ const submitPayment = async () => {
     active.value = true;
 };
 
-const toInvoice = (invoice) => {
+const toInvoice = () => {
     router.replace({name: 'orders'});
 };
 </script>

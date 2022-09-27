@@ -18,4 +18,9 @@ class ProductRepository
             $query->whereIn('name', $categories);
         });
     }
+
+    public function getByName(Builder $query, string $name): Builder|Product
+    {
+        return $query->where('name', 'like', $name . "%");
+    }
 }

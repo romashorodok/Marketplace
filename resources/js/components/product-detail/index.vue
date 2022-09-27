@@ -7,7 +7,7 @@
             </div>
             <div class="product-description">
                 <div class="product-price">
-                    <h4 class="price">{{ product.price }}</h4>
+                    <h4 class="price">{{ product.price }} ₴</h4>
                     <div class="app-btn app-btn-link cart-wrapper"
                          @click="onBuyClick">
                         <img class="cart-img" src="/icons/shopping-cart.svg" alt="">

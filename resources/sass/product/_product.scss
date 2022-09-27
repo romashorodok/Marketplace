@@ -118,7 +118,11 @@
             }
         }
     }
+}
 
+.empty-section.product-wrapper {
+    display: flex !important;
+    min-height: 90vh !important;
 }
 
 .pagination-wrapper {

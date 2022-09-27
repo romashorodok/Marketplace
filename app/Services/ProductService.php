@@ -18,12 +18,11 @@ class ProductService
         private readonly Product             $product,
         private readonly AuthenticateService $authenticate,
         private readonly ImageService        $image,
-        private readonly FileUploadService   $uploader
     )
     {
     }
 
-    public function getProducts(int $page = 1, int $size = 50, array $categories = []): Builder|Product
+    public function getProducts(int $page = 1, int $size = 50, ?string $name = '', array $categories = []): Builder|Product
     {
         $products = $this->product->newQuery();
         $products = $this->repository->getByPage($products, $page, $size);
@@ -31,15 +30,23 @@ class ProductService
         if ($categories)
             $products = $this->repository->getByCategories($products, $categories);
 
+        if ($name)
+            $products = $this->repository->getByName($products, $name);
+
         return $products;
     }
 
-    public function getCountByCategory(array $category): int
+    public function getCount(?string $name, ?array $category): int
     {
-        if ($category)
-            return $this->repository->getByCategories($this->product->newQuery(), $category)->count();
+        $product = $this->product->newQuery();
 
-        return $this->product->count();
+        if ($category)
+            $product = $this->repository->getByCategories($product, $category);
+
+        if($name)
+            $product = $this->repository->getByName($product, $name);
+
+        return $product->count();
     }
 
     public function getProductById(int $id): Collection|Product

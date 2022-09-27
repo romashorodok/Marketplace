@@ -41,6 +41,12 @@ export default {
 
         setPages(state, payload) {
             state.pages = payload;
+        },
+
+        setEmptyProducts(state) {
+            state.page = null;
+            state.pagination = [];
+            state.pages = [];
         }
     },
 
@@ -68,14 +74,23 @@ export default {
                 ...Object.fromEntries(pageSizeQuery)
             });
 
-            const products = await axios.get('/api/product', {params: query})
-                .then(req => req.data.products);
+                const products = await axios.get('/api/product', {params: query})
+                    .then(req => req.data.products)
+                    .catch(req => {
+                        console.error(req);
+                        return null;
+                    });
 
-            mapProductToState(context, products);
+                if (!products) {
+                    await context.commit('setEmptyProducts');
+                    return;
+                }
 
-            await context.commit('setPages', products.pages);
+                mapProductToState(context, products);
 
-            return products;
+                await context.commit('setPages', products.pages);
+
+                return products;
         },
 
         changePage(context, page) {
@@ -96,8 +111,8 @@ export default {
     },
 
     getters: {
-        getProducts: (state) => state.pagination[state.page],
-        getPages: (state) => state.pages,
-        getCurrentPage: (state) => state.page
+        getProducts: (state) => state.pagination ? state.pagination[state.page] : null,
+        getPages: (state) => state.pages ? state.pages : null,
+        getCurrentPage: (state) => state.page ? state.page : null
     }
 }

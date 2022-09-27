@@ -12,18 +12,22 @@
                            @change="onChangeCategory"
                     >
 
-                    <span class="checkmark" />
+                    <span class="checkmark"/>
                     {{ category.name }}
                 </label>
             </div>
+        </section>
+        <section class="filter-section body-field search-section">
+            <input :value="searchName" placeholder="Search product" @input="onChangeSearchProduct"/>
         </section>
     </div>
 </template>
 
 <script>
-import { useStore } from "vuex";
-import { computed } from "vue";
-import { useRouter } from "vue-router";
+import {useStore} from "vuex";
+import {computed} from "vue";
+import {useRouter} from "vue-router";
+import {debounce} from "@/shared/utils/debounce";
 
 export default {
     setup: async () => {
@@ -32,8 +36,16 @@ export default {
 
         await store.dispatch('fetchCategories');
 
+        const scrollToTop = () => window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        });
+
         return {
+            deferFetchProducts: debounce(() => store.dispatch('fetchProductsByFilters').then(scrollToTop), 1000),
             categories: computed(() => store.getters.getCategories),
+            searchName: computed(() => store.getters.getSearchName),
             router,
             store
         }
@@ -46,13 +58,15 @@ export default {
                 isAdd: event.target.checked
             });
 
-            await this.store.dispatch('fetchProductsByFilters')
-                .then(() => window.scrollTo({
-                    top: 0,
-                    left: 0,
-                    behavior: 'smooth'
-                }))
-                .catch(console.error);
+            this.deferFetchProducts();
+        },
+
+        async onChangeSearchProduct(event) {
+            await this.store.dispatch('mutateSearchName', {
+                name: event.target.value
+            });
+
+            this.deferFetchProducts();
         }
     },
 }
