@@ -26,10 +26,10 @@ import AppFilter from '@components/filter';
 import { useStore } from "vuex";
 
 export default {
-    mounted() {
+    setup: async  () => {
         const store = useStore();
 
-        store.dispatch('fetchCategories');
+        await store.dispatch('fetchCategories');
     },
 
     components: { AppProductList, AppFilter }

@@ -10,8 +10,8 @@
                            v-bind:name="category.name"
                            v-bind:id="category.name"
                            @change="onChangeCategory"
+                           :checked="isSelected(category.name)"
                     >
-
                     <span class="checkmark"/>
                     {{ category.name }}
                 </label>
@@ -23,51 +23,48 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import {useStore} from "vuex";
 import {computed} from "vue";
 import {useRouter} from "vue-router";
 import {debounce} from "@/shared/utils/debounce";
 
-export default {
-    setup: async () => {
-        const store = useStore();
-        const router = useRouter();
+const store = useStore();
+const router = useRouter();
 
-        await store.dispatch('fetchCategories');
+const scrollToTop = () => window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: 'smooth'
+});
 
-        const scrollToTop = () => window.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: 'smooth'
-        });
+const selectedCategories = computed(() => store.getters.getFilterCategories);
+const categories = computed(() => store.getters.getCategories);
+const searchName = computed(() => store.getters.getSearchName);
 
-        return {
-            deferFetchProducts: debounce(() => store.dispatch('fetchProductsByFilters').then(scrollToTop), 1000),
-            categories: computed(() => store.getters.getCategories),
-            searchName: computed(() => store.getters.getSearchName),
-            router,
-            store
-        }
-    },
+const deferFetchProducts = debounce(async () => {
+    await store.dispatch('changePage', 1);
+    const query = await store.dispatch('getProductQuery');
+    await router.push({ query: {...Object.fromEntries(query)}});
+    store.dispatch('fetchProductsByFilters').then(scrollToTop)
+}, 1000);
 
-    methods: {
-        async onChangeCategory(event) {
-            await this.store.dispatch('addOrRemoveCategory', {
-                name: event.target.name,
-                isAdd: event.target.checked
-            });
+async function onChangeCategory(event) {
+    await store.dispatch('addOrRemoveCategory', {
+        name: event.target.name,
+        isAdd: event.target.checked
+    });
+    deferFetchProducts();
+}
 
-            this.deferFetchProducts();
-        },
+async function onChangeSearchProduct(event) {
+    await store.dispatch('mutateSearchName', {
+        name: event.target.value
+    });
+    deferFetchProducts();
+}
 
-        async onChangeSearchProduct(event) {
-            await this.store.dispatch('mutateSearchName', {
-                name: event.target.value
-            });
-
-            this.deferFetchProducts();
-        }
-    },
+function isSelected(name) {
+    return selectedCategories.value.indexOf(name) > -1;
 }
 </script>

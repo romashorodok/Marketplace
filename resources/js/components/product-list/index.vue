@@ -13,40 +13,46 @@
     </div>
 </template>
 
-<script>
-import {useStore, mapGetters} from "vuex";
+<script setup>
+import {useStore} from "vuex";
+import {useRouter, useRoute} from "vue-router";
 import AppProduct from "./product";
 import AppPagination from '@/shared/pagination';
+import {computed, onBeforeUnmount, onMounted} from "vue";
 
-export default {
-    setup: async () => {
-        const store = useStore();
+const store = useStore();
+const route = useRoute();
+const router = useRouter();
 
-        await store.dispatch('fetchProductsByFilters');
+await store.dispatch('restoreProductQuery', route.query);
+await store.dispatch('fetchProductsByFilters');
 
-        return {store};
-    },
+const products = computed(() => store.getters.getProducts);
+const pages = computed(() => store.getters.getPages);
+const currentPage = computed(() => store.getters.getCurrentPage);
 
-    methods: {
-        changePage(page) {
-            this.store.dispatch('changePage', page)
-                .then(() => window.scrollTo({
-                    top: 0,
-                    left: 0,
-                    behavior: 'smooth'
-                }))
-                .catch(console.error);
-        }
-    },
+onMounted(() => {
+    const scrollPos = localStorage.getItem('scrollPos');
+    if (scrollPos) window.scrollTo({left: 0, top: parseInt(scrollPos), behavior: 'smooth'});
 
-    computed: {
-        ...mapGetters({
-            products: "getProducts",
-            pages: "getPages",
-            currentPage: "getCurrentPage"
-        }),
-    },
+    window.onbeforeunload = () => {
+        localStorage.setItem('scrollPos', window.scrollY.toString());
+    };
+});
 
-    components: {AppProduct, AppPagination}
+onBeforeUnmount(() => {
+    localStorage.setItem('scrollPos', window.scrollY.toString());
+});
+
+const scrollToTop = () => window.scrollTo({top: 0, left: 0, behavior: 'smooth'});
+
+async function changePage(page) {
+    await store.dispatch('changePage', page)
+        .then(scrollToTop)
+        .catch(console.error);
+
+    const query = await store.dispatch('getProductQuery');
+
+    await router.push({path: "/", query: {...Object.fromEntries(query)}});
 }
 </script>

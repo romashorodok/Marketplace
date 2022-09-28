@@ -28,10 +28,12 @@ export default  {
         },
 
         addOrRemoveCategory(context, { name, isAdd }) {
+            const category = { name, active: isAdd }
+
             if (isAdd)
-                context.commit('addCategoryQuery', { name });
+                context.commit('addCategoryQuery', category);
             else
-                context.commit('removeCategoryQuery', { name });
+                context.commit('removeCategoryQuery', category);
         },
 
         mutateSearchName(context, { name }) {
