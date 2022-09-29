@@ -30,10 +30,7 @@ export const ruleSignatures = {
 
         if (Math.sign(value) <= 0) return false;
 
-        const formatter = new Intl.NumberFormat(undefined, {minimumFractionDigits: 2});
-        const pattern = /[,-]/g;
-
-        const number = formatter.format(value.toString().replace(pattern, '.'));
+        const number = parseFloat(value);
 
         return number >= min && number <= max;
     }
